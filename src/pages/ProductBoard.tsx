@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SearchAutocomplete from '../components/SearchAutocomplete';
 import {
-  Search,
   Plus,
   Package,
   X,
@@ -17,7 +17,8 @@ import {
   Smartphone,
   Server,
   LineChart,
-  Cpu
+  Cpu,
+  Filter
 } from 'lucide-react';
 
 interface Product {
@@ -67,17 +68,61 @@ const ProductBoard = () => {
   const navigate = useNavigate();
   const [productsList, setProductsList] = useState<Product[]>(initialProducts);
   const [searchTerm, setSearchTerm]     = useState('');
+  const [selectedResponsavel, setSelectedResponsavel] = useState('Todos');
+  const [selectedProduto, setSelectedProduto] = useState('Todos');
+  const [selectedEtapa, setSelectedEtapa] = useState('Todas');
   const [isAdding, setIsAdding]         = useState(false);
-  const [viewMode, setViewMode]         = useState<'grid' | 'list'>('grid');
-  const [newProduct, setNewProduct]     = useState({
+  const [viewMode, setViewMode]         = useState<'grid' | 'list'>('list');
+  const [newProduct, setNewProduct] = useState({
     name: '', lead: '', category: 'Software', deadline: '',
+    productId: '',
+    productCR: '',
+    description: '',
+    dorResolve: '',
+    proposta: '',
+    cliente: '',
+    beneficios: '',
+    custos: '',
+    metodologia: '',
+    escalabilidade: '',
+    canalVendas: '',
+    estrategiaMercado: '',
+    transferenciatec: '',
   });
 
-  const filteredProducts = productsList.filter(p =>
-    p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.lead.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.category.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const fieldStyle = {
+    padding: '0.6rem 0.9rem',
+    borderRadius: 10,
+    border: '1px solid rgba(18,101,175,0.14)',
+    fontSize: '0.82rem',
+    color: 'var(--text-main)',
+    background: '#fff',
+    outline: 'none',
+    width: '100%',
+    fontFamily: 'inherit',
+    boxSizing: 'border-box' as const,
+    resize: 'vertical' as const,
+  };
+
+  const labelStyle: React.CSSProperties = {
+    fontSize: '0.75rem',
+    fontWeight: 700,
+    color: 'var(--text-secondary)',
+    marginBottom: '0.3rem',
+    display: 'block',
+    textTransform: 'uppercase',
+    letterSpacing: '0.04em',
+  };
+
+  const filteredProducts = productsList.filter(p => {
+    const matchSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.lead.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.category.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchResponsavel = selectedResponsavel === 'Todos' || p.lead === selectedResponsavel;
+    const matchProduto = selectedProduto === 'Todos' || p.name === selectedProduto;
+    const matchEtapa = selectedEtapa === 'Todas' || p.stage === selectedEtapa;
+    return matchSearch && matchResponsavel && matchProduto && matchEtapa;
+  });
 
   const handleAddProduct = (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,16 +140,16 @@ const ProductBoard = () => {
 
     setProductsList([product, ...productsList]);
     setIsAdding(false);
-    setNewProduct({ name: '', lead: '', category: 'Software', deadline: '' });
+    setNewProduct({ name: '', lead: '', category: 'Software', deadline: '', productId: '', productCR: '', description: '', dorResolve: '', proposta: '', cliente: '', beneficios: '', custos: '', metodologia: '', escalabilidade: '', canalVendas: '', estrategiaMercado: '', transferenciatec: '' });
   };
 
   return (
     <div style={{ position: 'relative', paddingBottom: '4rem' }}>
 
       {/* ── HEADER ── */}
-      <header style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <header className="page-header-sticky" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div>
-          <h1 style={{ fontSize: '1.85rem', fontWeight: 800, letterSpacing: '-0.03em', color: 'var(--text-main)', marginBottom: '0.25rem' }}>
+          <h1 style={{ fontSize: '1.85rem', fontWeight: 500, letterSpacing: '-0.03em', color: 'var(--text-main)', marginBottom: '0.25rem' }}>
             Portfólio de Produtos
           </h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: 500 }}>
@@ -113,28 +158,15 @@ const ProductBoard = () => {
         </div>
 
         <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-          {/* Search */}
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: '0.6rem',
-            background: '#FFFFFF', borderRadius: 12, padding: '0.6rem 1.1rem',
-            border: '1px solid rgba(18,101,175,0.1)', boxShadow: '0 2px 8px rgba(18,101,175,0.04)',
-          }}>
-            <Search size={16} color="var(--text-muted)" strokeWidth={1.5} />
-            <input
-              type="text"
-              placeholder="Buscar produtos..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              style={{ background: 'none', border: 'none', color: 'var(--text-main)', outline: 'none', width: 200, fontSize: '0.875rem', fontFamily: 'inherit' }}
-            />
-          </div>
-
           {/* View toggle */}
           <div style={{
             display: 'flex', gap: 0,
-            background: '#FFFFFF', border: '1px solid rgba(18,101,175,0.1)',
-            borderRadius: 10, overflow: 'hidden',
-            boxShadow: '0 2px 8px rgba(18,101,175,0.04)',
+            background: 'rgba(255,255,255,0.7)',
+            backdropFilter: 'blur(16px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(16px) saturate(180%)',
+            border: '1px solid rgba(255,255,255,0.6)',
+            borderRadius: 999, overflow: 'hidden',
+            boxShadow: '0 4px 14px rgba(18,101,175,0.08), inset 0 1px 0 rgba(255,255,255,0.6)',
           }}>
             {(['grid', 'list'] as const).map(mode => (
               <button
@@ -159,46 +191,179 @@ const ProductBoard = () => {
         </div>
       </header>
 
+      {/* ── SEARCH + FILTERS ── */}
+      <div className="filter-bar" style={{ marginBottom: '1.5rem' }}>
+        <SearchAutocomplete
+          value={searchTerm}
+          onChange={setSearchTerm}
+          placeholder="Buscar produtos..."
+          suggestions={productsList.map(p => p.name)}
+          containerStyle={{ flex: 1, minWidth: 220 }}
+          inputStyle={{ width: '100%' }}
+        />
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.8rem', fontWeight: 700, height: 'var(--btn-height)' }}>
+          <Filter size={15} strokeWidth={1.5} /> Filtros
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+          <label style={{ fontSize: '0.68rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Responsável</label>
+          <select className="filter-pill" value={selectedResponsavel} onChange={e => setSelectedResponsavel(e.target.value)}>
+            <option value="Todos">Todos</option>
+            {Array.from(new Set(productsList.map(p => p.lead))).map(lead => (
+              <option key={lead} value={lead}>{lead}</option>
+            ))}
+          </select>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+          <label style={{ fontSize: '0.68rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Produto</label>
+          <select className="filter-pill" value={selectedProduto} onChange={e => setSelectedProduto(e.target.value)}>
+            <option value="Todos">Todos os Produtos</option>
+            {productsList.map(p => <option key={p.id} value={p.name}>{p.name}</option>)}
+          </select>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+          <label style={{ fontSize: '0.68rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Etapa</label>
+          <select className="filter-pill" value={selectedEtapa} onChange={e => setSelectedEtapa(e.target.value)}>
+            <option value="Todas">Todas</option>
+            {Object.keys(stageConfig).map(stage => <option key={stage} value={stage}>{stage}</option>)}
+          </select>
+        </div>
+      </div>
+
       {/* ── ADD PRODUCT MODAL ── */}
       {isAdding && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(13,23,42,0.45)', backdropFilter: 'blur(6px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => setIsAdding(false)}>
-          <div className="glass-card" style={{ width: 500, padding: '2.5rem', borderRadius: 24, boxShadow: '0 32px 80px rgba(18,101,175,0.18)' }} onClick={e => e.stopPropagation()}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-main)' }}>Novo Produto</h2>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(13,23,42,0.45)', backdropFilter: 'blur(6px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }} onClick={() => setIsAdding(false)}>
+          <div className="glass-card" style={{ width: 760, maxWidth: '100%', maxHeight: '90vh', padding: '2rem', borderRadius: 24, boxShadow: '0 32px 80px rgba(18,101,175,0.18)', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 0 }} onClick={e => e.stopPropagation()}>
+            
+            {/* Modal Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', paddingBottom: '1rem', borderBottom: '1px solid rgba(18,101,175,0.08)' }}>
+              <div>
+                <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '0.15rem' }}>Novo Produto</h2>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Preencha as informações essenciais para estruturar o produto</p>
+              </div>
               <button onClick={() => setIsAdding(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
                 <X size={20} />
               </button>
             </div>
 
-            <form onSubmit={handleAddProduct} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <label style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Nome do Produto</label>
-                <input required placeholder="Ex: Portal de Inteligência V3" value={newProduct.name} onChange={e => setNewProduct({...newProduct, name: e.target.value})} />
-              </div>
+            <form onSubmit={handleAddProduct} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <label style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Responsável (Lead)</label>
-                <input required placeholder="Nome do gestor do produto" value={newProduct.lead} onChange={e => setNewProduct({...newProduct, lead: e.target.value})} />
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <label style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Categoria</label>
-                  <select value={newProduct.category} onChange={e => setNewProduct({...newProduct, category: e.target.value})}>
-                    <option>Software</option>
-                    <option>Mobile</option>
-                    <option>Backend</option>
-                    <option>Analytics</option>
-                    <option>Hardware</option>
-                  </select>
+              {/* Bloco 1: Identificação */}
+              <div>
+                <div style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--primary)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Package size={13} strokeWidth={2.5} /> Identificação do Produto
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <label style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Prazo Estimado</label>
-                  <input type="date" value={newProduct.deadline} onChange={e => setNewProduct({...newProduct, deadline: e.target.value})} />
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                  <div>
+                    <label style={labelStyle}>Nome do Produto *</label>
+                    <input required placeholder="Ex: Portal de Inteligência V3" value={newProduct.name} onChange={e => setNewProduct({...newProduct, name: e.target.value})} style={fieldStyle} />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Responsável (Lead) *</label>
+                    <select required value={newProduct.lead} onChange={e => setNewProduct({...newProduct, lead: e.target.value})} style={fieldStyle}>
+                      <option value="">Selecionar responsável...</option>
+                      <option value="Ana Silva">Ana Silva (Gestora Responsável)</option>
+                      <option value="Bruno Costa">Bruno Costa (Product Owner)</option>
+                      <option value="Carla Dias">Carla Dias (Scrum Master)</option>
+                      <option value="Diego Souza">Diego Souza (Desenvolvedor Frontend)</option>
+                      <option value="Larissa Gomes">Larissa Gomes (Desenvolvedor Backend)</option>
+                      <option value="Marcos Oliveira">Marcos Oliveira (Analista de QA)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style={labelStyle}>ID do Produto</label>
+                    <input placeholder="Ex: CIS-2026-001" value={newProduct.productId} onChange={e => setNewProduct({...newProduct, productId: e.target.value})} style={fieldStyle} />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>CR (Código de Referência)</label>
+                    <input placeholder="Ex: CR-0042" value={newProduct.productCR} onChange={e => setNewProduct({...newProduct, productCR: e.target.value})} style={fieldStyle} />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Categoria</label>
+                    <select value={newProduct.category} onChange={e => setNewProduct({...newProduct, category: e.target.value})} style={fieldStyle}>
+                      <option>Software</option>
+                      <option>Mobile</option>
+                      <option>Backend</option>
+                      <option>Analytics</option>
+                      <option>Hardware</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Prazo Estimado</label>
+                    <input type="date" value={newProduct.deadline} onChange={e => setNewProduct({...newProduct, deadline: e.target.value})} style={fieldStyle} />
+                  </div>
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+              {/* Bloco 2: Visão do Produto */}
+              <div>
+                <div style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--primary)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <TrendingUp size={13} strokeWidth={2.5} /> Visão e Estratégia
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  <div>
+                    <label style={labelStyle}>1. O que o produto entrega? (Visão)</label>
+                    <textarea placeholder="Descreva o que o produto entrega de valor ao mercado..." value={newProduct.description} onChange={e => setNewProduct({...newProduct, description: e.target.value})} style={{...fieldStyle, minHeight: 60}} />
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                    <div>
+                      <label style={labelStyle}>2. Qual dor o produto resolve?</label>
+                      <textarea placeholder="Problema central que o produto soluciona..." value={newProduct.dorResolve} onChange={e => setNewProduct({...newProduct, dorResolve: e.target.value})} style={{...fieldStyle, minHeight: 60}} />
+                    </div>
+                    <div>
+                      <label style={labelStyle}>3. Estratégia ou Proposta de Valor</label>
+                      <textarea placeholder="Como o produto se diferencia e gera valor..." value={newProduct.proposta} onChange={e => setNewProduct({...newProduct, proposta: e.target.value})} style={{...fieldStyle, minHeight: 60}} />
+                    </div>
+                    <div>
+                      <label style={labelStyle}>4. Defina o cliente deste produto</label>
+                      <textarea placeholder="Perfil do cliente-alvo, segmento, setor..." value={newProduct.cliente} onChange={e => setNewProduct({...newProduct, cliente: e.target.value})} style={{...fieldStyle, minHeight: 60}} />
+                    </div>
+                    <div>
+                      <label style={labelStyle}>5. Quais os benefícios?</label>
+                      <textarea placeholder="Principais benefícios e impactos gerados..." value={newProduct.beneficios} onChange={e => setNewProduct({...newProduct, beneficios: e.target.value})} style={{...fieldStyle, minHeight: 60}} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bloco 3: Execução e Mercado */}
+              <div>
+                <div style={{ fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--primary)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Tag size={13} strokeWidth={2.5} /> Execução e Mercado
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                  <div>
+                    <label style={labelStyle}>6. Composição de Custos</label>
+                    <textarea placeholder="Estrutura de custos: desenvolvimento, operacional, licenças..." value={newProduct.custos} onChange={e => setNewProduct({...newProduct, custos: e.target.value})} style={{...fieldStyle, minHeight: 60}} />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>7. Metodologia Aplicada</label>
+                    <textarea placeholder="Ex: Scrum, Kanban, Design Thinking, Lean..." value={newProduct.metodologia} onChange={e => setNewProduct({...newProduct, metodologia: e.target.value})} style={{...fieldStyle, minHeight: 60}} />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>8. Escalabilidade do Produto</label>
+                    <textarea placeholder="Como o produto escala: regioes, usuarios, modulos..." value={newProduct.escalabilidade} onChange={e => setNewProduct({...newProduct, escalabilidade: e.target.value})} style={{...fieldStyle, minHeight: 60}} />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>9. Canal de Vendas</label>
+                    <textarea placeholder="Canais de distribuição e comercialização do produto..." value={newProduct.canalVendas} onChange={e => setNewProduct({...newProduct, canalVendas: e.target.value})} style={{...fieldStyle, minHeight: 60}} />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>10. Estratégia de Penetração de Mercado</label>
+                    <textarea placeholder="Como o produto entrará e conquistará o mercado..." value={newProduct.estrategiaMercado} onChange={e => setNewProduct({...newProduct, estrategiaMercado: e.target.value})} style={{...fieldStyle, minHeight: 60}} />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>11. Transferência de Tecnologia</label>
+                    <textarea placeholder="Prevê transferência? Para quem? Condições?" value={newProduct.transferenciatec} onChange={e => setNewProduct({...newProduct, transferenciatec: e.target.value})} style={{...fieldStyle, minHeight: 60}} />
+                  </div>
+                </div>
+              </div>
+
+              {/* Botões */}
+              <div style={{ display: 'flex', gap: '1rem', paddingTop: '0.5rem', borderTop: '1px solid rgba(18,101,175,0.08)' }}>
                 <button type="button" onClick={() => setIsAdding(false)} className="btn-secondary" style={{ flex: 1, justifyContent: 'center' }}>Cancelar</button>
                 <button type="submit" className="btn-primary" style={{ flex: 1, justifyContent: 'center' }}>Salvar Produto</button>
               </div>
@@ -224,18 +389,27 @@ const ProductBoard = () => {
                 key={product.id}
                 className="glass-card"
                 onClick={() => navigate(`/produtos/${product.id}`)}
-                style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column' }}
+                style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}
               >
+                {/* Decorative fluid blob, purely for UI polish */}
+                <div aria-hidden="true" style={{
+                  position: 'absolute', top: '-30%', right: '-20%', width: 180, height: 150,
+                  borderRadius: '60% 40% 34% 66% / 56% 34% 66% 44%',
+                  background: 'radial-gradient(circle at 32% 30%, #9CC7F5 0%, #1265AF 75%)',
+                  opacity: 0.1, filter: 'blur(1px)', pointerEvents: 'none', zIndex: -1,
+                }} />
+
                 {/* Header */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
                   <div style={{
                     width: 46, height: 46, borderRadius: 14,
-                    background: 'rgba(18,101,175,0.08)', border: '1px solid rgba(18,101,175,0.1)',
+                    background: 'linear-gradient(135deg, rgba(18,101,175,0.12), rgba(91,169,240,0.06))',
+                    border: '1px solid rgba(18,101,175,0.1)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)'
                   }}>
                     {cat.icon}
                   </div>
-                  <span className={`badge ${stage.badgeClass}`}>
+                  <span className={`badge ${stage.badgeClass}`} style={{ borderRadius: 999 }}>
                     {product.stage}
                   </span>
                 </div>
@@ -277,8 +451,8 @@ const ProductBoard = () => {
                     <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Progresso</span>
                     <span style={{ fontSize: '0.85rem', fontWeight: 800, color: progColor }}>{product.progress}%</span>
                   </div>
-                  <div style={{ width: '100%', height: 5, background: 'rgba(18,101,175,0.08)', borderRadius: 999, overflow: 'hidden' }}>
-                    <div style={{ width: `${product.progress}%`, height: '100%', background: progColor, borderRadius: 999, transition: 'width 0.6s ease' }} />
+                  <div style={{ width: '100%', height: 7, background: 'rgba(18,101,175,0.1)', borderRadius: 999, overflow: 'hidden', boxShadow: 'inset 0 1px 2px rgba(18,101,175,0.08)' }}>
+                    <div style={{ width: `${Math.max(product.progress, 3)}%`, height: '100%', background: progColor, borderRadius: 999, transition: 'width 0.6s ease' }} />
                   </div>
                 </div>
               </div>
@@ -295,12 +469,13 @@ const ProductBoard = () => {
       {/* ── LIST VIEW ── */}
       {viewMode === 'list' && (
         <div className="glass-card" style={{ padding: 0, overflow: 'hidden' }}>
+          <div style={{ overflowX: 'auto' }}>
           <table className="enterprise-table">
             <thead>
               <tr>
                 <th>Produto</th>
                 <th>Responsável</th>
-                <th>Estágio</th>
+                <th>Etapa</th>
                 <th>Progresso</th>
                 <th>Prazo</th>
               </tr>
@@ -332,11 +507,11 @@ const ProductBoard = () => {
                         <span style={{ color: 'var(--text-secondary)' }}>{product.lead}</span>
                       </div>
                     </td>
-                    <td><span className={`badge ${stage.badgeClass}`}>{product.stage}</span></td>
+                    <td><span className={`badge ${stage.badgeClass}`} style={{ borderRadius: 999 }}>{product.stage}</span></td>
                     <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        <div style={{ width: 80, height: 4, background: 'var(--border)', borderRadius: 999, overflow: 'hidden' }}>
-                          <div style={{ width: `${product.progress}%`, height: '100%', background: progColor, borderRadius: 999 }} />
+                        <div style={{ width: 80, height: 6, background: 'rgba(18,101,175,0.1)', borderRadius: 999, overflow: 'hidden', boxShadow: 'inset 0 1px 2px rgba(18,101,175,0.08)' }}>
+                          <div style={{ width: `${Math.max(product.progress, 4)}%`, height: '100%', background: progColor, borderRadius: 999 }} />
                         </div>
                         <span style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-main)' }}>{product.progress}%</span>
                       </div>
@@ -353,6 +528,12 @@ const ProductBoard = () => {
               )}
             </tbody>
           </table>
+          </div>
+          {filteredProducts.length > 0 && (
+            <div style={{ padding: '0.85rem 1.5rem', borderTop: '1px solid var(--border)', fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 500 }}>
+              {filteredProducts.length} produto{filteredProducts.length !== 1 ? 's' : ''} encontrado{filteredProducts.length !== 1 ? 's' : ''}
+            </div>
+          )}
         </div>
       )}
     </div>

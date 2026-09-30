@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Clock, 
-  Eye, 
-  X, 
-  Paperclip, 
-  Brain, 
-  Target, 
-  AlertTriangle, 
-  ShieldCheck, 
+import { createPortal } from 'react-dom';
+import {
+  Clock,
+  Eye,
+  Pencil,
+  X,
+  Paperclip,
+  Brain,
+  Target,
+  AlertTriangle,
+  ShieldCheck,
   MessageSquare,
   CheckCircle2,
   Calendar,
@@ -18,10 +20,11 @@ import {
   AlertOctagon,
   Users,
   TrendingUp,
-  Search,
-  Check
+  Check,
+  Filter
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import SearchAutocomplete from '../components/SearchAutocomplete';
 
 interface RecordItem {
   id: string;
@@ -48,6 +51,8 @@ interface PhaseData {
   observations: string;
   topics?: string[];
   records?: RecordItem[];
+  mandatory?: boolean;
+  notApplicable?: boolean;
 }
 
 interface Product {
@@ -61,7 +66,7 @@ interface Product {
 const defaultPhasesList: PhaseData[] = [
   { 
     id: 'imersao', 
-    title: 'Imersão', 
+    title: 'Imersão e Pesquisa', 
     responsible: 'Ana Silva', 
     progress: 100, 
     startDate: '2026-01-01', 
@@ -92,66 +97,162 @@ const defaultPhasesList: PhaseData[] = [
     difficulties: '', 
     riscos: '', 
     observations: '', 
-    topics: ['Proposta de Valor', 'Mapeamento de Jornadas', 'Arquitetura de Alto Nível'], 
+    topics: ['O que o produto entrega', 'Proposta de Valor', 'Mapeamento de Jornadas'], 
     records: [
       { id: 'r4', type: 'Dificuldade', content: 'Atraso na liberação da API externa de homologação', date: '25/01/2026' },
       { id: 'r5', type: 'Risco', content: 'Dependência de fornecedor único para infraestrutura', date: '02/02/2026' }
     ] 
   },
   { 
+    id: 'dor', 
+    title: 'Dor que Resolve', 
+    responsible: 'Carla Dias', 
+    progress: 80, 
+    startDate: '2026-02-06', 
+    endDate: '2026-02-20', 
+    evidence: '', 
+    learnings: '', 
+    decisions: '', 
+    difficulties: '', 
+    riscos: '', 
+    observations: '', 
+    topics: ['Problema Central', 'Impacto no Usuário', 'Validação da Dor'], 
+    records: [] 
+  },
+  { 
     id: 'estrategia', 
-    title: 'Estratégia', 
+    title: 'Estratégia de Valor', 
     responsible: 'Carla Dias', 
     progress: 65, 
-    startDate: '2026-02-06', 
-    endDate: '2026-03-20', 
+    startDate: '2026-02-21', 
+    endDate: '2026-03-10', 
     evidence: '', 
     learnings: '', 
     decisions: '', 
     difficulties: '', 
     riscos: '', 
     observations: '', 
-    topics: ['Business Model Canvas', 'Roadmap de Features', 'Backlog de Requisitos'], 
+    topics: ['Business Model Canvas', 'Diferenciais Competitivos', 'Proposta Única de Valor'], 
     records: [] 
   },
   { 
-    id: 'lancamento', 
-    title: 'Lançamento', 
+    id: 'cliente', 
+    title: 'Cliente do Produto', 
     responsible: 'Diego Souza', 
-    progress: 0, 
-    startDate: '2026-03-21', 
-    endDate: '2026-04-15', 
+    progress: 40, 
+    startDate: '2026-03-11', 
+    endDate: '2026-03-25', 
     evidence: '', 
     learnings: '', 
     decisions: '', 
     difficulties: '', 
     riscos: '', 
     observations: '', 
-    topics: ['Piloto Operacional', 'Go-To-Market', 'Rollout de Versões'], 
+    topics: ['Segmento Alvo', 'Persona', 'Jornada do Cliente'], 
     records: [] 
   },
   { 
-    id: 'evolucao', 
-    title: 'Evolução', 
+    id: 'beneficios', 
+    title: 'Benefícios', 
     responsible: 'Ana Silva', 
     progress: 0, 
-    startDate: '2026-04-16', 
-    endDate: '2026-06-30', 
+    startDate: '2026-03-26', 
+    endDate: '2026-04-05', 
     evidence: '', 
     learnings: '', 
     decisions: '', 
     difficulties: '', 
     riscos: '', 
     observations: '', 
-    topics: ['Métricas de Uso', 'Melhoria Contínua', 'Suporte Técnico'], 
+    topics: ['Benefícios Diretos', 'Benefícios Indiretos', 'Métricas de Impacto'], 
+    records: [] 
+  },
+  { 
+    id: 'custos', 
+    title: 'Composição de Custos', 
+    responsible: 'Bruno Costa', 
+    progress: 0, 
+    startDate: '2026-04-06', 
+    endDate: '2026-04-20', 
+    evidence: '', 
+    learnings: '', 
+    decisions: '', 
+    difficulties: '', 
+    riscos: '', 
+    observations: '', 
+    topics: ['Custos de Desenvolvimento', 'Custos Operacionais', 'Precificação'], 
+    records: [] 
+  },
+  { 
+    id: 'metodologia', 
+    title: 'Metodologia', 
+    responsible: 'Carla Dias', 
+    progress: 0, 
+    startDate: '2026-04-21', 
+    endDate: '2026-05-05', 
+    evidence: '', 
+    learnings: '', 
+    decisions: '', 
+    difficulties: '', 
+    riscos: '', 
+    observations: '', 
+    topics: ['Metodologia Aplicada', 'Framework de Gestão', 'Cerimônias e Rituais'], 
+    records: [] 
+  },
+  { 
+    id: 'escalabilidade', 
+    title: 'Escalabilidade', 
+    responsible: 'Diego Souza', 
+    progress: 0, 
+    startDate: '2026-05-06', 
+    endDate: '2026-05-20', 
+    evidence: '', 
+    learnings: '', 
+    decisions: '', 
+    difficulties: '', 
+    riscos: '', 
+    observations: '', 
+    topics: ['Capacidade de Crescimento', 'Arquitetura Escalável', 'Expansão Regional'], 
+    records: [] 
+  },
+  { 
+    id: 'canal', 
+    title: 'Canal de Vendas', 
+    responsible: 'Ana Silva', 
+    progress: 0, 
+    startDate: '2026-05-21', 
+    endDate: '2026-06-05', 
+    evidence: '', 
+    learnings: '', 
+    decisions: '', 
+    difficulties: '', 
+    riscos: '', 
+    observations: '', 
+    topics: ['Canais Diretos', 'Canais Indiretos', 'Parcerias Comerciais'], 
+    records: [] 
+  },
+  { 
+    id: 'mercado', 
+    title: 'Penetração de Mercado', 
+    responsible: 'Bruno Costa', 
+    progress: 0, 
+    startDate: '2026-06-06', 
+    endDate: '2026-06-25', 
+    evidence: '', 
+    learnings: '', 
+    decisions: '', 
+    difficulties: '', 
+    riscos: '', 
+    observations: '', 
+    topics: ['Estratégia Go-To-Market', 'Piloto Operacional', 'Rollout de Versões'], 
     records: [] 
   },
   { 
     id: 'repasses', 
-    title: 'Repasses', 
+    title: 'Transferência de Tecnologia', 
     responsible: 'Bruno Costa', 
     progress: 0, 
-    startDate: '2026-07-01', 
+    startDate: '2026-06-26', 
     endDate: '2026-07-15', 
     evidence: '', 
     learnings: '', 
@@ -159,13 +260,29 @@ const defaultPhasesList: PhaseData[] = [
     difficulties: '', 
     riscos: '', 
     observations: '', 
-    topics: ['Transferência de Tecnologia', 'Documentação Final', 'Encerramento'], 
-    records: [] 
+    topics: ['Transferência de Tecnologia', 'Documentação Final', 'Encerramento e Entrega'],
+    records: []
   }
 ];
 
+// Macro etapas obrigatórias: presentes em todo produto, não podem ser excluídas
+// pelo gestor — apenas marcadas como "não se aplica" (ProductBuilder) quando o
+// produto não passa por elas, e nesse caso somem desta linha do tempo.
+const mandatoryPhases: PhaseData[] = [
+  { id: 'ideacao', title: 'Ideação', responsible: 'Gestor', progress: 0, startDate: '', endDate: '', evidence: '', learnings: '', decisions: '', difficulties: '', riscos: '', observations: '', topics: [], records: [], mandatory: true },
+  { id: 'planejamento', title: 'Planejamento', responsible: 'Gestor', progress: 0, startDate: '', endDate: '', evidence: '', learnings: '', decisions: '', difficulties: '', riscos: '', observations: '', topics: [], records: [], mandatory: true },
+  { id: 'desenvolvimento', title: 'Desenvolvimento', responsible: 'Gestor', progress: 0, startDate: '', endDate: '', evidence: '', learnings: '', decisions: '', difficulties: '', riscos: '', observations: '', topics: [], records: [], mandatory: true },
+  { id: 'entrega', title: 'Entrega', responsible: 'Gestor', progress: 0, startDate: '', endDate: '', evidence: '', learnings: '', decisions: '', difficulties: '', riscos: '', observations: '', topics: [], records: [], mandatory: true },
+];
+
+const ETAPA_OPTIONS = Array.from(new Set([...mandatoryPhases, ...defaultPhasesList].map(p => p.title)));
+
 const ProductEvolution = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedProduto, setSelectedProduto] = useState('Todos');
+  const [selectedEtapaFilter, setSelectedEtapaFilter] = useState('Todas');
+  const [selectedStatus, setSelectedStatus] = useState('Todos');
+  const [hoveredPhase, setHoveredPhase] = useState<{ productId: number, phaseId: string, x: number, y: number } | null>(null);
   const [expandedProduct, setExpandedProduct] = useState<number | null>(1);
   const [products, setProducts] = useState<Product[]>([]);
   const [productPhasesMap, setProductPhasesMap] = useState<Record<number, PhaseData[]>>({});
@@ -192,12 +309,28 @@ const ProductEvolution = () => {
 
     setProducts(initialProducts);
 
-    // Load each product phases from localStorage or fallback
+    // Clear old cached phases to force reload with new 12-step structure
+    initialProducts.forEach(prod => {
+      const stored = localStorage.getItem(`cis_product_phases_${prod.id}`);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        // If cached version has fewer than 12 phases, clear and rebuild
+        if (parsed.length < 12) {
+          localStorage.removeItem(`cis_product_phases_${prod.id}`);
+        }
+      }
+    });    // Load each product phases from localStorage or fallback
     const tempMap: Record<number, PhaseData[]> = {};
     initialProducts.forEach(prod => {
       const stored = localStorage.getItem(`cis_product_phases_${prod.id}`);
       if (stored) {
-        tempMap[prod.id] = JSON.parse(stored);
+        const parsed: PhaseData[] = JSON.parse(stored);
+        const missingMandatory = mandatoryPhases.filter(mp => !parsed.some(p => p.id === mp.id));
+        const withMandatory = missingMandatory.length > 0 ? [...missingMandatory, ...parsed] : parsed;
+        tempMap[prod.id] = withMandatory;
+        if (missingMandatory.length > 0) {
+          localStorage.setItem(`cis_product_phases_${prod.id}`, JSON.stringify(withMandatory));
+        }
       } else {
         // Build customized default phases based on project characteristics
         const customDefaults = defaultPhasesList.map((p, idx) => {
@@ -217,8 +350,9 @@ const ProductEvolution = () => {
           }
           return { ...p, progress: progressVal };
         });
-        tempMap[prod.id] = customDefaults;
-        localStorage.setItem(`cis_product_phases_${prod.id}`, JSON.stringify(customDefaults));
+        const withMandatory = [...mandatoryPhases, ...customDefaults];
+        tempMap[prod.id] = withMandatory;
+        localStorage.setItem(`cis_product_phases_${prod.id}`, JSON.stringify(withMandatory));
       }
     });
     setProductPhasesMap(tempMap);
@@ -291,38 +425,80 @@ const ProductEvolution = () => {
     return end < today;
   };
 
-  const filteredProducts = products.filter(p => 
-    p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.lead.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const getProductStatus = (prod: Product): 'Concluído' | 'Atrasado' | 'Em andamento' => {
+    const phases = (productPhasesMap[prod.id] || []).filter(p => !p.notApplicable);
+    if (phases.length === 0) return 'Em andamento';
+    const avg = Math.round(phases.reduce((acc, p) => acc + p.progress, 0) / phases.length);
+    if (avg === 100) return 'Concluído';
+    return phases.some(p => isStageDelayed(p)) ? 'Atrasado' : 'Em andamento';
+  };
+
+  const filteredProducts = products.filter(p => {
+    const matchSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.lead.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchProduto = selectedProduto === 'Todos' || p.name === selectedProduto;
+    const matchEtapa = selectedEtapaFilter === 'Todas' ||
+      (productPhasesMap[p.id] || []).some(ph => !ph.notApplicable && ph.title === selectedEtapaFilter);
+    const matchStatus = selectedStatus === 'Todos' || getProductStatus(p) === selectedStatus;
+    return matchSearch && matchProduto && matchEtapa && matchStatus;
+  });
+
+  const hoveredPhaseData = hoveredPhase
+    ? (productPhasesMap[hoveredPhase.productId] || []).find(p => p.id === hoveredPhase.phaseId)
+    : null;
 
   return (
-    <div style={{ maxWidth: '1240px', margin: '0 auto', paddingBottom: '5rem' }} className="fade-up">
-      
-      {/* Header */}
-      <header style={{ marginBottom: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-        <div>
-          <h1 style={{ fontSize: '2.25rem', margin: 0, fontWeight: 800, color: '#111111', letterSpacing: '-0.03em' }}>Evolução do Portfólio (Executive Timeline)</h1>
-          <p style={{ color: '#111111', margin: '0.4rem 0 0', fontSize: '0.95rem' }}>Acompanhamento executivo consolidado com macro e micro etapas de todos os projetos ativos no CIS.</p>
-        </div>
+    <>
+    <div style={{ paddingBottom: '5rem' }} className="fade-up">
 
-        {/* Search */}
-        <div className="glass-card" style={{ padding: '0.6rem 1.25rem', display: 'flex', alignItems: 'center', gap: '0.6rem', border: '1px solid rgba(18, 101, 175, 0.08)', borderRadius: '14px', boxShadow: 'var(--shadow-sm)', transition: 'all 0.2s' }}>
-          <Search size={16} color="var(--primary)" />
-          <input 
-            type="text" 
-            placeholder="Buscar projetos..." 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ background: 'none', border: 'none', color: '#111111', outline: 'none', width: '220px', fontSize: '0.9rem', fontWeight: 600 }}
-          />
-        </div>
+      {/* Header */}
+      <header className="page-header-sticky">
+        <h1 style={{ fontSize: '2.25rem', margin: 0, fontWeight: 500, color: '#333333', letterSpacing: '-0.03em' }}>Evolução do Portfólio (Executive Timeline)</h1>
+        <p style={{ color: '#333333', margin: '0.4rem 0 0', fontSize: '0.95rem' }}>Acompanhamento executivo consolidado com macro e micro etapas de todos os projetos ativos no CIS.</p>
       </header>
+
+      {/* Busca e Filtros */}
+      <div className="filter-bar" style={{ marginBottom: '2rem' }}>
+        <SearchAutocomplete
+          value={searchTerm}
+          onChange={setSearchTerm}
+          placeholder="Buscar projetos..."
+          suggestions={products.map(p => p.name)}
+          containerStyle={{ flex: 1, minWidth: 220 }}
+          inputStyle={{ width: '100%' }}
+        />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.8rem', fontWeight: 700, height: 'var(--btn-height)' }}>
+          <Filter size={15} strokeWidth={1.5} /> Filtros
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+          <label style={{ fontSize: '0.68rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Produto</label>
+          <select className="filter-pill" value={selectedProduto} onChange={e => setSelectedProduto(e.target.value)}>
+            <option value="Todos">Todos os Produtos</option>
+            {products.map(p => <option key={p.id} value={p.name}>{p.name}</option>)}
+          </select>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+          <label style={{ fontSize: '0.68rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Etapa</label>
+          <select className="filter-pill" value={selectedEtapaFilter} onChange={e => setSelectedEtapaFilter(e.target.value)}>
+            <option value="Todas">Todas</option>
+            {ETAPA_OPTIONS.map(title => <option key={title} value={title}>{title}</option>)}
+          </select>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+          <label style={{ fontSize: '0.68rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Status</label>
+          <select className="filter-pill" value={selectedStatus} onChange={e => setSelectedStatus(e.target.value)}>
+            <option value="Todos">Todos</option>
+            <option value="Em andamento">Em andamento</option>
+            <option value="Atrasado">Atrasado</option>
+            <option value="Concluído">Concluído</option>
+          </select>
+        </div>
+      </div>
 
       {/* Projects List Timeline */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
         {filteredProducts.map((prod) => {
-          const phases = productPhasesMap[prod.id] || [];
+          const phases = (productPhasesMap[prod.id] || []).filter(p => !p.notApplicable);
           
           // Calculate macro progress
           const totalProgress = phases.reduce((acc, p) => acc + p.progress, 0);
@@ -330,38 +506,72 @@ const ProductEvolution = () => {
           const activeStage = phases.find(p => p.progress > 0 && p.progress < 100) || phases.find(p => p.progress === 0);
           const completedPhasesCount = phases.filter(p => p.progress === 100).length;
           const totalPhasesCount = phases.length;
+          const status = getProductStatus(prod);
+          const statusStyle = status === 'Concluído'
+            ? { bg: 'rgba(34, 197, 94, 0.08)', color: 'var(--success)', border: 'rgba(34, 197, 94, 0.08)' }
+            : status === 'Atrasado'
+              ? { bg: 'rgba(239, 68, 68, 0.08)', color: 'var(--danger)', border: 'rgba(239, 68, 68, 0.08)' }
+              : { bg: 'rgba(18, 101, 175, 0.08)', color: 'var(--primary)', border: 'rgba(18, 101, 175, 0.08)' };
 
           return (
-            <div 
-              key={prod.id} 
-              className="glass-card" 
-              style={{ 
-                padding: '2.5rem', 
+            <div
+              key={prod.id}
+              style={{
+                padding: '2.5rem',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '1.75rem'
+                gap: '1.75rem',
+                position: 'relative',
+                overflow: 'hidden',
+                borderRadius: 24,
+                background: '#ffffff',
+                border: '1px solid #eef1fa',
+                boxShadow: '0 1px 2px rgba(15,23,42,0.04), 0 24px 48px -12px rgba(59,90,180,0.16), 0 8px 20px -6px rgba(59,90,180,0.10)',
+                transition: 'transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s ease',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.transform = 'translateY(-3px)';
+                e.currentTarget.style.boxShadow = '0 32px 56px -12px rgba(59,90,180,0.22), 0 10px 24px -6px rgba(59,90,180,0.14)';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 1px 2px rgba(15,23,42,0.04), 0 24px 48px -12px rgba(59,90,180,0.16), 0 8px 20px -6px rgba(59,90,180,0.10)';
               }}
             >
+              {/* Decorative fluid waves, purely for UI polish — behind content, palette-only colors */}
+              <svg aria-hidden="true" preserveAspectRatio="none" viewBox="0 0 600 130"
+                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: 130, zIndex: -1, pointerEvents: 'none' }}>
+                <path d="M0,55 C120,10 200,95 320,55 C440,15 520,90 600,50 L600,130 L0,130 Z" fill="var(--primary)" opacity="0.07" />
+              </svg>
+              <svg aria-hidden="true" preserveAspectRatio="none" viewBox="0 0 600 95"
+                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: 95, zIndex: -1, pointerEvents: 'none' }}>
+                <path d="M0,35 C140,75 260,5 400,45 C480,70 540,20 600,40 L600,95 L0,95 Z" fill="var(--primary-light)" opacity="0.09" />
+              </svg>
+              <svg aria-hidden="true" preserveAspectRatio="none" viewBox="0 0 600 110"
+                style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: 110, zIndex: -1, pointerEvents: 'none' }}>
+                <path d="M0,55 C130,90 230,15 360,55 C470,85 540,25 600,60 L600,0 L0,0 Z" fill="var(--primary-dark)" opacity="0.06" />
+              </svg>
+
               {/* Header flex row */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
                 <div>
-                  <h3 style={{ margin: 0, fontSize: '1.45rem', fontWeight: 800, color: '#111111', letterSpacing: '-0.02em' }}>{prod.name}</h3>
-                  <span style={{ fontSize: '0.85rem', color: '#111111', marginTop: '0.25rem', display: 'block', fontWeight: 600 }}>
+                  <h3 style={{ margin: 0, fontSize: '1.45rem', fontWeight: 800, color: '#333333', letterSpacing: '-0.02em' }}>{prod.name}</h3>
+                  <span style={{ fontSize: '0.85rem', color: '#333333', marginTop: '0.25rem', display: 'block', fontWeight: 600 }}>
                     {prod.category === 'Software' ? 'SESI Nacional · Educação' : prod.category === 'Mobile' ? 'SESI SP · Saúde' : `CIS Portfolio · ${prod.category}`}
                   </span>
                 </div>
                 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <span style={{ 
-                    fontSize: '0.75rem', 
-                    fontWeight: 700, 
-                    padding: '0.35rem 0.85rem', 
-                    borderRadius: '20px', 
-                    background: 'rgba(18, 101, 175, 0.08)', 
-                    color: 'var(--primary)',
-                    border: '1px solid rgba(18, 101, 175, 0.08)'
+                  <span style={{
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    padding: '0.35rem 0.85rem',
+                    borderRadius: '20px',
+                    background: statusStyle.bg,
+                    color: statusStyle.color,
+                    border: `1px solid ${statusStyle.border}`
                   }}>
-                    Em andamento
+                    {status}
                   </span>
                   
                   {/* Clickable details icon button */}
@@ -396,23 +606,23 @@ const ProductEvolution = () => {
                       e.currentTarget.style.color = 'var(--primary)';
                       e.currentTarget.style.transform = 'scale(1)';
                     }}
-                    title="Ver Detalhes do Projeto"
+                    title="Editar e Ver Detalhes da Governança"
                   >
-                    <Eye size={16} />
+                    <Pencil size={16} />
                   </button>
                 </div>
               </div>
 
               {/* Metadata row */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap', background: 'rgba(18, 101, 175, 0.03)', padding: '0.85rem 1.25rem', borderRadius: '14px', border: '1px solid rgba(18, 101, 175, 0.04)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: '#111111' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: '#333333' }}>
                   <Users size={15} color="var(--primary)" style={{ opacity: 0.8 }} />
-                  <span>Resp.: <strong style={{ color: '#111111' }}>{prod.lead}</strong></span>
+                  <span>Resp.: <strong style={{ color: '#333333' }}>{prod.lead}</strong></span>
                 </div>
                 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: '#111111' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: '#333333' }}>
                   <Calendar size={15} color="var(--primary)" style={{ opacity: 0.8 }} />
-                  <span>Prazo: <strong style={{ color: '#111111' }}>{new Date(prod.deadline).toLocaleDateString('pt-BR')}</strong></span>
+                  <span>Prazo: <strong style={{ color: '#333333' }}>{new Date(prod.deadline).toLocaleDateString('pt-BR')}</strong></span>
                 </div>
 
                 <div style={{ flexGrow: 1 }} />
@@ -447,8 +657,8 @@ const ProductEvolution = () => {
               {/* Progress bar section */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem' }}>
-                  <span style={{ color: '#111111', fontWeight: 600 }}>Etapas Concluídas</span>
-                  <span style={{ fontWeight: 700, color: '#111111' }}>{completedPhasesCount} de {totalPhasesCount} ({Math.round((completedPhasesCount / totalPhasesCount) * 100)}%)</span>
+                  <span style={{ color: '#333333', fontWeight: 600 }}>Etapas Concluídas</span>
+                  <span style={{ fontWeight: 700, color: '#333333' }}>{completedPhasesCount} de {totalPhasesCount} ({Math.round((completedPhasesCount / totalPhasesCount) * 100)}%)</span>
                 </div>
                 <div style={{ width: '100%', height: '10px', background: 'rgba(18, 101, 175, 0.05)', borderRadius: '6px', overflow: 'hidden', border: '1px solid rgba(18, 101, 175, 0.04)' }}>
                   <div 
@@ -464,119 +674,129 @@ const ProductEvolution = () => {
               </div>
 
               {/* Connecting line heading and timeline area */}
-              <div style={{ borderTop: '1px solid rgba(18, 101, 175, 0.08)', paddingTop: '1.5rem', marginTop: '0.5rem' }}>
-                <h4 style={{ margin: '0 0 1.5rem 0', fontSize: '0.75rem', textTransform: 'uppercase', color: '#111111', letterSpacing: '0.08em', fontWeight: 700 }}>
+              <div style={{ borderTop: '1px solid rgba(18, 101, 175, 0.08)', paddingTop: '1.5rem', marginTop: '0.5rem', width: '100%' }}>
+                <h4 style={{ margin: '0 0 1.5rem 0', fontSize: '0.75rem', textTransform: 'uppercase', color: '#333333', letterSpacing: '0.08em', fontWeight: 700 }}>
                   Linha do Tempo de Governança
                 </h4>
-                
-                {/* Nodes row */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative', padding: '0 0.5rem' }}>
-                  {phases.map((phase, idx) => {
-                    const isCompleted = phase.progress === 100;
-                    const isCurrentActive = activeStage?.id === phase.id;
-                    const nextPhase = phases[idx + 1];
-                    const isNextCompleted = nextPhase ? nextPhase.progress === 100 : false;
 
-                    return (
-                      <div key={phase.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, position: 'relative' }}>
-                        
-                        {/* Connecting Line to the next node */}
-                        {idx < phases.length - 1 && (
-                          <div style={{
-                            position: 'absolute',
-                            top: '16px',
-                            left: 'calc(50% + 18px)',
-                            width: 'calc(100% - 36px)',
-                            height: '4px',
-                            background: isCompleted && isNextCompleted 
-                              ? 'var(--success)' 
-                              : isCompleted 
-                                ? 'linear-gradient(90deg, var(--success) 0%, rgba(18, 101, 175, 0.2) 100%)' 
-                                : 'rgba(18, 101, 175, 0.08)',
-                            borderRadius: '2px',
-                            zIndex: 0
-                          }} />
-                        )}
+                {/* Scrollable Container for Nodes row — extra vertical padding keeps the node glow (ink overflow)
+                    from being clipped flat by the overflow-y:auto the browser forces alongside overflowX:auto */}
+                <div className="custom-scrollbar" style={{ overflowX: 'auto', paddingTop: '1.5rem', paddingBottom: '1.5rem', marginTop: '-1.5rem', marginBottom: '-0.75rem', width: '100%' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: `repeat(${phases.length}, 1fr)`, alignItems: 'flex-start', position: 'relative', padding: '0 0.25rem', width: '100%', gap: '0.2rem' }}>
+                    {phases.map((phase, idx) => {
+                      const isCompleted = phase.progress === 100;
+                      const isCurrentActive = activeStage?.id === phase.id;
+                      const nextPhase = phases[idx + 1];
+                      const isNextCompleted = nextPhase ? nextPhase.progress === 100 : false;
 
-                        {/* Node circle */}
-                        <button
-                          onClick={() => handleDetailsClick(prod.id, phase)}
-                          style={{
-                            width: '34px',
-                            height: '34px',
-                            borderRadius: '50%',
-                            background: isCompleted 
+                      return (
+                        <div key={phase.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, position: 'relative' }}>
+                          
+                          {/* Connecting Line to the next node */}
+                          {idx < phases.length - 1 && (
+                            <div style={{
+                              position: 'absolute',
+                              top: '16px',
+                              left: 'calc(50% + 18px)',
+                              width: 'calc(100% - 36px)',
+                              height: '4px',
+                              background: isCompleted && isNextCompleted 
+                                ? 'var(--success)' 
+                                : isCompleted 
+                                  ? 'linear-gradient(90deg, var(--success) 0%, rgba(18, 101, 175, 0.2) 100%)' 
+                                  : 'rgba(18, 101, 175, 0.08)',
+                              borderRadius: '2px',
+                              zIndex: 0
+                            }} />
+                          )}
+
+                          {/* Node circle */}
+                          <button
+                            onClick={() => handleDetailsClick(prod.id, phase)}
+                            style={{
+                              width: '34px',
+                              height: '34px',
+                              borderRadius: '50%',
+                              background: isCompleted 
+                                ? 'var(--success)' 
+                                : isCurrentActive 
+                                  ? 'var(--primary)' 
+                                  : 'white',
+                              border: isCurrentActive 
+                                ? '4px solid var(--primary-light)' 
+                                : '3px solid rgba(18, 101, 175, 0.12)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              color: 'white',
+                              cursor: 'pointer',
+                              zIndex: 1,
+                              outline: 'none',
+                              transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                              boxShadow: isCurrentActive
+                                ? '0 0 18px 6px var(--primary-glow), 0 4px 10px rgba(18, 101, 175, 0.15)'
+                                : isCompleted
+                                  ? '0 4px 10px rgba(34, 197, 94, 0.15)'
+                                  : 'none',
+                              padding: 0
+                            }}
+                            onMouseEnter={(e) => {
+                               const rect = e.currentTarget.getBoundingClientRect();
+                               setHoveredPhase({ productId: prod.id, phaseId: phase.id, x: rect.left + rect.width / 2, y: rect.bottom });
+                               e.currentTarget.style.transform = 'scale(1.15)';
+                               if (isCurrentActive) {
+                                 e.currentTarget.style.boxShadow = '0 0 16px rgba(18, 101, 175, 0.35)';
+                               } else if (isCompleted) {
+                                 e.currentTarget.style.boxShadow = '0 0 16px rgba(34, 197, 94, 0.35)';
+                               } else {
+                                 e.currentTarget.style.borderColor = 'var(--primary)';
+                                 e.currentTarget.style.boxShadow = '0 4px 10px rgba(18, 101, 175, 0.08)';
+                               }
+                             }}
+                             onMouseLeave={(e) => {
+                               setHoveredPhase(null);
+                               e.currentTarget.style.transform = 'scale(1)';
+                               e.currentTarget.style.boxShadow = isCurrentActive
+                                 ? '0 0 18px 6px var(--primary-glow), 0 4px 10px rgba(18, 101, 175, 0.15)'
+                                 : isCompleted
+                                   ? '0 4px 10px rgba(34, 197, 94, 0.15)'
+                                   : 'none';
+                               if (!isCurrentActive && !isCompleted) {
+                                 e.currentTarget.style.borderColor = 'rgba(18, 101, 175, 0.12)';
+                               }
+                             }}
+                            title={`Clique para ver detalhes de ${phase.title}`}
+                          >
+                            {isCompleted ? (
+                              <Check size={14} color="white" strokeWidth={3} />
+                            ) : isCurrentActive ? (
+                              <Clock size={12} color="white" />
+                            ) : null}
+                          </button>
+
+                          {/* Label under circle */}
+                          <span style={{
+                            marginTop: '0.75rem',
+                            fontSize: '0.75rem',
+                            fontWeight: isCurrentActive ? 700 : 600,
+                            color: isCompleted 
                               ? 'var(--success)' 
                               : isCurrentActive 
                                 ? 'var(--primary)' 
-                                : 'white',
-                            border: isCurrentActive 
-                              ? '4px solid var(--primary-light)' 
-                              : '3px solid rgba(18, 101, 175, 0.12)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            color: 'white',
-                            cursor: 'pointer',
-                            zIndex: 1,
-                            transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
-                            boxShadow: isCurrentActive 
-                              ? '0 0 12px var(--primary-glow), 0 4px 10px rgba(18, 101, 175, 0.15)' 
-                              : isCompleted 
-                                ? '0 4px 10px rgba(34, 197, 94, 0.15)' 
-                                : 'none',
-                            padding: 0
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.transform = 'scale(1.15)';
-                            if (isCurrentActive) {
-                              e.currentTarget.style.boxShadow = '0 0 16px rgba(18, 101, 175, 0.35)';
-                            } else if (isCompleted) {
-                              e.currentTarget.style.boxShadow = '0 0 16px rgba(34, 197, 94, 0.35)';
-                            } else {
-                              e.currentTarget.style.borderColor = 'var(--primary)';
-                              e.currentTarget.style.boxShadow = '0 4px 10px rgba(18, 101, 175, 0.08)';
-                            }
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = 'scale(1)';
-                            e.currentTarget.style.boxShadow = isCurrentActive 
-                              ? '0 0 12px var(--primary-glow), 0 4px 10px rgba(18, 101, 175, 0.15)' 
-                              : isCompleted 
-                                ? '0 4px 10px rgba(34, 197, 94, 0.15)' 
-                                : 'none';
-                            if (!isCurrentActive && !isCompleted) {
-                              e.currentTarget.style.borderColor = 'rgba(18, 101, 175, 0.12)';
-                            }
-                          }}
-                          title={`Clique para ver detalhes de ${phase.title}`}
-                        >
-                          {isCompleted ? (
-                            <Check size={14} color="white" strokeWidth={3} />
-                          ) : isCurrentActive ? (
-                            <Clock size={12} color="white" />
-                          ) : null}
-                        </button>
-
-                        {/* Label under circle */}
-                        <span style={{
-                          marginTop: '0.75rem',
-                          fontSize: '0.8rem',
-                          fontWeight: isCurrentActive ? 700 : 600,
-                          color: isCompleted 
-                            ? 'var(--success)' 
-                            : isCurrentActive 
-                              ? 'var(--primary)' 
-                              : '#111111',
-                          textAlign: 'center',
-                          whiteSpace: 'nowrap',
-                          transition: 'all 0.2s'
-                        }}>
-                          {phase.title}
-                        </span>
-                      </div>
-                    );
-                  })}
+                                : '#333333',
+                            textAlign: 'center',
+                            whiteSpace: 'nowrap',
+                            transition: 'all 0.2s',
+                            maxWidth: '90px',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis'
+                          }} title={phase.title}>
+                            {phase.title}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
 
@@ -585,23 +805,77 @@ const ProductEvolution = () => {
         })}
       </div>
 
-      {/* Details / Timeline Governance Modal */}
+    </div>
+
+      {/* Governance timeline hover tooltip — portaled to <body> so it renders below the node
+          without being clipped by the timeline row's scroll container */}
+      {hoveredPhase && hoveredPhaseData && createPortal(
+        <div style={{
+          position: 'fixed',
+          top: hoveredPhase.y + 12,
+          left: hoveredPhase.x,
+          transform: 'translateX(-50%)',
+          background: '#1e293b',
+          color: 'white',
+          padding: '0.75rem 1rem',
+          borderRadius: '12px',
+          boxShadow: '0 10px 25px rgba(0,0,0,0.25)',
+          zIndex: 1000,
+          width: '220px',
+          fontSize: '0.75rem',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.35rem',
+          pointerEvents: 'none'
+        }}>
+          <div style={{ fontWeight: 800, fontSize: '0.85rem', color: '#38bdf8', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.25rem', marginBottom: '0.25rem' }}>
+            {hoveredPhaseData.title}
+          </div>
+          <div><strong>Responsável:</strong> {hoveredPhaseData.responsible}</div>
+          <div><strong>Progresso:</strong> {hoveredPhaseData.progress}%</div>
+          <div><strong>Período:</strong> {hoveredPhaseData.startDate ? new Date(hoveredPhaseData.startDate).toLocaleDateString('pt-BR') : 'A definir'} - {hoveredPhaseData.endDate ? new Date(hoveredPhaseData.endDate).toLocaleDateString('pt-BR') : 'A definir'}</div>
+          {hoveredPhaseData.topics && hoveredPhaseData.topics.length > 0 && (
+            <div style={{ marginTop: '0.25rem', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '0.25rem' }}>
+              <strong>Microetapas:</strong>
+              <ul style={{ margin: '0.2rem 0 0 0', paddingLeft: '1rem', listStyleType: 'disc' }}>
+                {hoveredPhaseData.topics.slice(0, 3).map(t => <li key={t}>{t}</li>)}
+                {hoveredPhaseData.topics.length > 3 && <li>e mais {hoveredPhaseData.topics.length - 3}...</li>}
+              </ul>
+            </div>
+          )}
+          {/* Small triangle pointer, now pointing up toward the node above */}
+          <div style={{
+            position: 'absolute',
+            bottom: '100%',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: 0,
+            height: 0,
+            borderLeft: '6px solid transparent',
+            borderRight: '6px solid transparent',
+            borderBottom: '6px solid #1e293b'
+          }} />
+        </div>,
+        document.body
+      )}
+
+      {/* Details / Timeline Governance Modal — rendered outside fade-up to avoid transform context breaking position:fixed */}
       <AnimatePresence>
         {isDetailsModalOpen && selectedPhase && selectedProductId && (
-          <div className="modal-backdrop" onClick={() => setIsDetailsModalOpen(false)}>
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(13,23,42,0.65)', backdropFilter: 'blur(8px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }} onClick={() => setIsDetailsModalOpen(false)}>
             <motion.div 
-              className="modal-content"
+              className="glass-card"
               onClick={(e) => e.stopPropagation()}
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              style={{ maxWidth: '850px', width: '95%', padding: '2.5rem' }}
+              style={{ maxWidth: '900px', width: '100%', maxHeight: '90vh', overflowY: 'auto', borderRadius: '24px', padding: '2.5rem', boxShadow: '0 32px 80px rgba(18,101,175,0.18)' }}
             >
               {/* Header */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid var(--border)', paddingBottom: '1.25rem' }}>
                 <div>
-                  <h2 style={{ fontSize: '1.5rem', margin: 0, fontWeight: 800, color: '#111111' }}>Histórico da Etapa: {selectedPhase.title}</h2>
-                  <p style={{ color: '#111111', fontSize: '0.85rem', margin: '0.25rem 0 0 0', fontWeight: 600 }}>Gestão de Conhecimento e Registro de Rastreabilidade • {products.find(p => p.id === selectedProductId)?.name}</p>
+                  <h2 style={{ fontSize: '1.4rem', margin: 0, fontWeight: 800, color: '#333333' }}>Etapa: {selectedPhase.title}</h2>
+                  <p style={{ color: '#333333', fontSize: '0.85rem', margin: '0.25rem 0 0 0', fontWeight: 600 }}>Gestão de Conhecimento, Micro Etapas e Rastreabilidade • {products.find(p => p.id === selectedProductId)?.name}</p>
                 </div>
                 <button 
                   onClick={() => setIsDetailsModalOpen(false)} 
@@ -609,7 +883,7 @@ const ProductEvolution = () => {
                     background: 'rgba(18, 101, 175, 0.05)', 
                     border: 'none', 
                     cursor: 'pointer', 
-                    color: '#111111',
+                    color: '#333333',
                     width: '32px',
                     height: '32px',
                     borderRadius: '50%',
@@ -624,7 +898,7 @@ const ProductEvolution = () => {
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.background = 'rgba(18, 101, 175, 0.05)';
-                    e.currentTarget.style.color = '#111111';
+                    e.currentTarget.style.color = '#333333';
                   }}
                 >
                   <X size={16} />
@@ -632,48 +906,124 @@ const ProductEvolution = () => {
               </div>
 
               {/* Phase Info Header Cards */}
-              <div style={{ 
-                display: 'grid', 
-                gridTemplateColumns: 'repeat(4, 1fr)', 
-                gap: '1rem', 
-                marginBottom: '2rem', 
-                padding: '1.25rem', 
+              <div className="grid-auto-4" style={{
+                gap: '1rem',
+                marginBottom: '1.5rem',
+                padding: '1.25rem',
                 background: 'rgba(18, 101, 175, 0.03)', 
                 borderRadius: '16px', 
                 border: '1px solid rgba(18, 101, 175, 0.08)' 
               }}>
                 <div>
-                  <span style={{ fontSize: '0.7rem', color: '#111111', display: 'block', textTransform: 'uppercase', fontWeight: 600, marginBottom: '0.25rem' }}>Responsável</span>
-                  <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#111111' }}>{selectedPhase.responsible || 'Sem responsável'}</span>
+                  <span style={{ fontSize: '0.7rem', color: '#333333', display: 'block', textTransform: 'uppercase', fontWeight: 600, marginBottom: '0.25rem' }}>Responsável</span>
+                  <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#333333' }}>{selectedPhase.responsible || 'Sem responsável'}</span>
                 </div>
                 <div>
-                  <span style={{ fontSize: '0.7rem', color: '#111111', display: 'block', textTransform: 'uppercase', fontWeight: 600, marginBottom: '0.25rem' }}>Data de Início</span>
-                  <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#111111' }}>{selectedPhase.startDate ? new Date(selectedPhase.startDate).toLocaleDateString('pt-BR') : 'A definir'}</span>
+                  <span style={{ fontSize: '0.7rem', color: '#333333', display: 'block', textTransform: 'uppercase', fontWeight: 600, marginBottom: '0.25rem' }}>Data de Início</span>
+                  <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#333333' }}>{selectedPhase.startDate ? new Date(selectedPhase.startDate).toLocaleDateString('pt-BR') : 'A definir'}</span>
                 </div>
                 <div>
-                  <span style={{ fontSize: '0.7rem', color: '#111111', display: 'block', textTransform: 'uppercase', fontWeight: 600, marginBottom: '0.25rem' }}>Data Limite</span>
-                  <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#111111' }}>{selectedPhase.endDate ? new Date(selectedPhase.endDate).toLocaleDateString('pt-BR') : 'A definir'}</span>
+                  <span style={{ fontSize: '0.7rem', color: '#333333', display: 'block', textTransform: 'uppercase', fontWeight: 600, marginBottom: '0.25rem' }}>Data Limite</span>
+                  <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#333333' }}>{selectedPhase.endDate ? new Date(selectedPhase.endDate).toLocaleDateString('pt-BR') : 'A definir'}</span>
                 </div>
                 <div>
-                  <span style={{ fontSize: '0.7rem', color: '#111111', display: 'block', textTransform: 'uppercase', fontWeight: 600, marginBottom: '0.25rem' }}>Progresso</span>
+                  <span style={{ fontSize: '0.7rem', color: '#333333', display: 'block', textTransform: 'uppercase', fontWeight: 600, marginBottom: '0.25rem' }}>Progresso</span>
                   <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--primary)' }}>{selectedPhase.progress}%</span>
+                </div>
+              </div>
+
+              {/* Seção: Andamento de todas as Micro Etapas desta Macro Etapa */}
+              <div style={{ marginBottom: '2rem', padding: '1.25rem', background: '#F8FAFC', borderRadius: '16px', border: '1px solid rgba(18,101,175,0.08)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.85rem' }}>
+                  <h4 style={{ fontSize: '0.85rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--primary)', margin: 0 }}>
+                    Micro Etapas Relacionadas (Andamento)
+                  </h4>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)' }}>
+                    {(selectedPhase.topics || []).length} micro etapas cadastradas
+                  </span>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '0.75rem' }}>
+                  {(selectedPhase.topics || []).map((topic, idx) => {
+                    const recordCount = (selectedPhase.records || []).filter(r => r.microStage === topic).length;
+                    const isSelected = associationType === topic;
+
+                    return (
+                      <div 
+                        key={topic}
+                        onClick={() => setAssociationType(topic)}
+                        style={{
+                          padding: '0.85rem 1rem',
+                          background: isSelected ? 'rgba(18,101,175,0.08)' : 'white',
+                          border: `1.5px solid ${isSelected ? 'var(--primary)' : 'rgba(18,101,175,0.1)'}`,
+                          borderRadius: '12px',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '0.35rem'
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <span style={{ fontSize: '0.68rem', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase' }}>
+                            Micro #{idx + 1}
+                          </span>
+                          <span style={{ fontSize: '0.68rem', fontWeight: 700, background: recordCount > 0 ? 'rgba(34,197,94,0.12)' : 'rgba(245,158,11,0.12)', color: recordCount > 0 ? 'var(--success)' : 'var(--warning)', padding: '0.1rem 0.45rem', borderRadius: 999 }}>
+                            {recordCount > 0 ? `${recordCount} registro(s)` : 'Pendente'}
+                          </span>
+                        </div>
+
+                        {/* Título Editável da Micro Etapa */}
+                        <input
+                          value={topic}
+                          onClick={e => e.stopPropagation()}
+                          onChange={e => {
+                            const newTitle = e.target.value;
+                            const updatedTopics = (selectedPhase.topics || []).map(t => t === topic ? newTitle : t);
+                            const updatedPhase = { ...selectedPhase, topics: updatedTopics };
+                            setSelectedPhase(updatedPhase);
+
+                            if (selectedProductId) {
+                              const productPhases = productPhasesMap[selectedProductId] || [];
+                              const updatedPhases = productPhases.map(p => p.id === selectedPhase.id ? updatedPhase : p);
+                              saveProductPhases(selectedProductId, updatedPhases);
+                            }
+                          }}
+                          style={{
+                            fontSize: '0.85rem',
+                            fontWeight: 700,
+                            color: 'var(--text-main)',
+                            border: '1px dashed transparent',
+                            background: 'transparent',
+                            outline: 'none',
+                            padding: '2px 4px',
+                            borderRadius: '4px',
+                            width: '100%'
+                          }}
+                          onFocus={e => e.target.style.borderColor = 'var(--primary)'}
+                          onBlur={e => e.target.style.borderColor = 'transparent'}
+                          title="Clique para editar o título da micro etapa"
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
                 {/* Left: Add new record form */}
                 <div>
-                  <h3 style={{ fontSize: '1.15rem', marginBottom: '1.25rem', fontWeight: 700, color: '#111111' }}>Cadastrar Registro</h3>
+                  <h3 style={{ fontSize: '1.15rem', marginBottom: '1.25rem', fontWeight: 700, color: '#333333' }}>Cadastrar Registro</h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                      <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#111111' }}>Tipo de Registro</label>
+                      <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#333333' }}>Tipo de Registro</label>
                       <select 
                         style={{ 
                           padding: '0.75rem 1rem', 
                           borderRadius: '12px', 
                           border: '1px solid rgba(18, 101, 175, 0.12)', 
                           background: 'white', 
-                          color: '#111111',
+                          color: '#333333',
                           fontSize: '0.875rem',
                           outline: 'none',
                           transition: 'border-color 0.2s'
@@ -691,14 +1041,14 @@ const ProductEvolution = () => {
                       </select>
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                      <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#111111' }}>Associar a</label>
+                      <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#333333' }}>Associar a</label>
                       <select 
                         style={{ 
                           padding: '0.75rem 1rem', 
                           borderRadius: '12px', 
                           border: '1px solid rgba(18, 101, 175, 0.12)', 
                           background: 'white', 
-                          color: '#111111',
+                          color: '#333333',
                           fontSize: '0.875rem',
                           outline: 'none',
                           transition: 'border-color 0.2s'
@@ -713,7 +1063,7 @@ const ProductEvolution = () => {
                       </select>
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                      <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#111111' }}>Conteúdo</label>
+                      <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#333333' }}>Conteúdo</label>
                       <textarea 
                         style={{ 
                           padding: '0.75rem 1rem', 
@@ -722,7 +1072,7 @@ const ProductEvolution = () => {
                           minHeight: '120px', 
                           resize: 'vertical',
                           outline: 'none',
-                          color: '#111111',
+                          color: '#333333',
                           fontSize: '0.875rem',
                           transition: 'border-color 0.2s'
                         }}
@@ -732,20 +1082,20 @@ const ProductEvolution = () => {
                       />
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                      <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#111111' }}>Pessoas Mencionadas (@)</label>
+                      <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#333333' }}>Pessoas Mencionadas (@)</label>
                       <input 
-                        style={{ padding: '0.75rem 1rem', borderRadius: '12px', border: '1px solid rgba(18, 101, 175, 0.12)', color: '#111111', fontSize: '0.875rem' }}
+                        style={{ padding: '0.75rem 1rem', borderRadius: '12px', border: '1px solid rgba(18, 101, 175, 0.12)', color: '#333333', fontSize: '0.875rem' }}
                         placeholder="Ex: @João, @Maria"
                         value={recordMentions}
                         onChange={(e) => setRecordMentions(e.target.value)}
                       />
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                      <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#111111' }}>Anexos</label>
+                      <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#333333' }}>Anexos</label>
                       <input 
                         type="file"
                         multiple
-                        style={{ padding: '0.5rem', borderRadius: '12px', border: '1px dashed rgba(18, 101, 175, 0.3)', color: '#111111', fontSize: '0.8rem' }}
+                        style={{ padding: '0.5rem', borderRadius: '12px', border: '1px dashed rgba(18, 101, 175, 0.3)', color: '#333333', fontSize: '0.8rem' }}
                         onChange={(e) => {
                           if (e.target.files) {
                             setRecordAttachments(Array.from(e.target.files));
@@ -775,10 +1125,10 @@ const ProductEvolution = () => {
 
                 {/* Right: Listed records */}
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <h3 style={{ fontSize: '1.15rem', marginBottom: '1.25rem', fontWeight: 700, color: '#111111' }}>Linha do Tempo de Governança</h3>
+                  <h3 style={{ fontSize: '1.15rem', marginBottom: '1.25rem', fontWeight: 700, color: '#333333' }}>Linha do Tempo de Governança</h3>
                   <div className="custom-scrollbar" style={{ flex: 1, maxHeight: '350px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.75rem', paddingRight: '0.5rem' }}>
                     {(!selectedPhase.records || selectedPhase.records.length === 0) ? (
-                      <div style={{ textAlign: 'center', padding: '3rem 1rem', background: 'rgba(18, 101, 175, 0.02)', borderRadius: '16px', color: '#111111', border: '1px dashed rgba(18, 101, 175, 0.12)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                      <div style={{ textAlign: 'center', padding: '3rem 1rem', background: 'rgba(18, 101, 175, 0.02)', borderRadius: '16px', color: '#333333', border: '1px dashed rgba(18, 101, 175, 0.12)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
                         <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>Nenhum registro cadastrado</span>
                         <span style={{ fontSize: '0.8rem', opacity: 0.8 }}>Use o formulário ao lado para registrar governança.</span>
                       </div>
@@ -850,7 +1200,7 @@ const ProductEvolution = () => {
                                 </span>
                               )}
                             </div>
-                            <span style={{ fontSize: '0.875rem', color: '#111111', fontWeight: 600, lineHeight: 1.5 }}>{rec.content}</span>
+                            <span style={{ fontSize: '0.875rem', color: '#333333', fontWeight: 600, lineHeight: 1.5 }}>{rec.content}</span>
                             {rec.mentions && <span style={{ fontSize: '0.75rem', color: 'var(--primary)', fontWeight: 600 }}>{rec.mentions}</span>}
                             {rec.attachments && rec.attachments.length > 0 && (
                               <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.25rem' }}>
@@ -859,7 +1209,7 @@ const ProductEvolution = () => {
                                 ))}
                               </div>
                             )}
-                            <span style={{ fontSize: '0.7rem', color: '#111111' }}>{rec.date}</span>
+                            <span style={{ fontSize: '0.7rem', color: '#333333' }}>{rec.date}</span>
                           </div>
                           <button 
                             onClick={() => handleDeleteRecord(rec.id)} 
@@ -896,7 +1246,7 @@ const ProductEvolution = () => {
           </div>
         )}
       </AnimatePresence>
-    </div>
+    </>
   );
 };
 

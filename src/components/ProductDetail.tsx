@@ -79,11 +79,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product, onClose }) => {
         <div>
           <span className="badge badge-success" style={{ marginBottom: '0.5rem', display: 'inline-block' }}>{product.category}</span>
           <h2 style={{ fontSize: '1.75rem', color: 'white' }}>{product.name}</h2>
-          <p style={{ color: '#111111' }}>Responsável: {product.lead}</p>
+          <p style={{ color: '#333333' }}>Responsável: {product.lead}</p>
         </div>
         <button 
           onClick={onClose}
-          style={{ background: 'none', border: 'none', color: '#111111', cursor: 'pointer' }}
+          style={{ background: 'none', border: 'none', color: '#333333', cursor: 'pointer' }}
         >
           <X size={24} />
         </button>
@@ -97,7 +97,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product, onClose }) => {
         <div style={{ width: '100%', height: '10px', background: 'rgba(255,255,255,0.05)', borderRadius: '5px', overflow: 'hidden', marginBottom: '0.5rem' }}>
           <div style={{ width: `${product.progress}%`, height: '100%', background: 'linear-gradient(to right, var(--primary), var(--accent-cyan))' }}></div>
         </div>
-        <p style={{ fontSize: '0.875rem', color: '#111111' }}>{product.progress}% concluído • {product.stage}</p>
+        <p style={{ fontSize: '0.875rem', color: '#333333' }}>{product.progress}% concluído • {product.stage}</p>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
@@ -144,11 +144,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product, onClose }) => {
                       }}
                       className="topic-item"
                     >
-                      {hasData ? <CheckCircle2 size={18} color="var(--success)" /> : <Circle size={18} color="#111111" />}
-                      <span style={{ fontSize: '0.9rem', color: isExpanded ? 'var(--primary)' : '#111111', flex: 1 }}>
+                      {hasData ? <CheckCircle2 size={18} color="var(--success)" /> : <Circle size={18} color="#333333" />}
+                      <span style={{ fontSize: '0.9rem', color: isExpanded ? 'var(--primary)' : '#333333', flex: 1 }}>
                         {topic}
                       </span>
-                      {isExpanded ? <ChevronUp size={16} color="#111111" /> : <ChevronDown size={16} color="#111111" />}
+                      {isExpanded ? <ChevronUp size={16} color="#333333" /> : <ChevronDown size={16} color="#333333" />}
                     </div>
 
                     <AnimatePresence>
@@ -183,7 +183,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product, onClose }) => {
                                 <Paperclip size={14} />
                                 Anexar Evidência
                               </button>
-                              <span style={{ fontSize: '0.7rem', color: '#111111' }}>Salvo automaticamente</span>
+                              <span style={{ fontSize: '0.7rem', color: '#333333' }}>Salvo automaticamente</span>
                             </div>
                           </div>
                         </motion.div>
@@ -198,7 +198,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product, onClose }) => {
       </div>
 
       <div style={{ marginTop: '3rem', padding: '1.5rem', borderTop: '1px solid var(--border)', textAlign: 'center' }}>
-        <p style={{ fontSize: '0.85rem', color: '#111111', marginBottom: '1rem' }}>
+        <p style={{ fontSize: '0.85rem', color: '#333333', marginBottom: '1rem' }}>
           Toda evidência anexada aqui será automaticamente enviada ao repositório central.
         </p>
         <button className="btn-primary" style={{ width: '100%' }}>

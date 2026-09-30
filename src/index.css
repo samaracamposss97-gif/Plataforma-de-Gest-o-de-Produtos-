@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
   /* Premium Enterprise Palette */
@@ -6,7 +6,8 @@
   --primary-hover: #1B76CA;
   --primary-dark: #0D4D87;
   --primary-light: #5BA9F0;
-  
+  --primary-glow: rgba(18, 101, 175, 0.45);
+
   /* Text Colors */
   --text-main: #16324A;
   --text-secondary: #6B7B8C;
@@ -44,7 +45,7 @@
 }
 
 body {
-  font-family: 'Inter', 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Poppins', 'Plus Jakarta Sans', 'Inter', sans-serif;
   background: linear-gradient(180deg, #F7FAFD 0%, #EEF4FA 100%);
   color: var(--text-main);
   line-height: 1.5;
@@ -61,77 +62,343 @@ h1, h2, h3, h4 {
   line-height: 1.2;
 }
 
-/* ── PREMIUM CARDS ── */
+/* ── FILTER / SEARCH BARS (same height as .btn-primary, pill rounding, light-blue liquid glass) ── */
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  height: var(--btn-height);
+  background: rgba(91, 169, 240, 0.14);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(91, 169, 240, 0.35);
+  border-radius: 999px;
+  padding: 0 1.25rem;
+  box-shadow: 0 4px 14px rgba(18, 101, 175, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.filter-pill {
+  height: var(--btn-height);
+  width: auto;
+  padding: 0 1.1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(91, 169, 240, 0.35);
+  background: rgba(91, 169, 240, 0.14);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  box-shadow: 0 4px 14px rgba(18, 101, 175, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  font-size: 0.85rem;
+  color: var(--text-main);
+}
+
+.filter-bar {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  flex-wrap: wrap;
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.72) 100%);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 20px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 10px 26px rgba(18, 101, 175, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* ── PREMIUM CARDS (liquid glass) ── */
 .glass-card {
-  background: var(--bg-card);
-  border: 1px solid rgba(18, 101, 175, 0.05);
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.72) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 24px;
   padding: 2rem;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 0 0 1px rgba(18, 101, 175, 0.03);
   position: relative;
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
 }
 
 .glass-card:hover {
-  box-shadow: var(--shadow-hover);
-  border-color: rgba(18, 101, 175, 0.08);
+  box-shadow: var(--shadow-hover), inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 0 0 1px rgba(18, 101, 175, 0.05);
+  border-color: rgba(255, 255, 255, 0.7);
   transform: translateY(-2px);
 }
 
-/* ── PREMIUM BUTTONS ── */
-.btn-primary {
-  background: linear-gradient(135deg, #1265AF 0%, #1B76CA 100%);
-  color: white;
-  border: none;
-  padding: 0.85rem 1.6rem;
-  border-radius: 14px;
-  font-weight: 600;
-  font-size: 0.875rem;
-  cursor: pointer;
+/* ── SPOTLIGHT GRADIENT CARD (vivid accent tile, same palette as the rest of the platform) ── */
+.gradient-card {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 24px;
+  padding: 2rem;
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 16px 36px rgba(13, 77, 135, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.gradient-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 85% -10%, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0) 55%);
+  pointer-events: none;
+}
+
+.gradient-card:hover {
+  box-shadow: 0 22px 44px rgba(13, 77, 135, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.gradient-card.gradient-card--purple {
+  background: linear-gradient(135deg, var(--purple) 0%, #5B21B6 100%);
+  box-shadow: 0 16px 36px rgba(91, 33, 182, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.gradient-card.gradient-card--purple:hover {
+  box-shadow: 0 22px 44px rgba(91, 33, 182, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* ── BUTTON SYSTEM — Oval / Pill Shape ── */
+:root {
+  --btn-height: 2.5rem;          /* 40px — altura padrão */
+  --btn-radius: 999px;           /* formato oval/pílula */
+  --btn-padding-x: 1.375rem;     /* espaçamento horizontal */
+  --btn-font-size: 0.875rem;
+  --btn-font-weight: 600;
+  --btn-gap: 0.45rem;            /* espaço ícone ↔ texto */
+  --btn-transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Base compartilhada */
+.btn-primary,
+.btn-secondary,
+.btn-danger,
+.btn-ghost,
+.btn-dark {
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 8px 20px rgba(18, 101, 175, 0.2);
+  justify-content: center;
+  gap: var(--btn-gap);
+  height: var(--btn-height);
+  padding: 0 var(--btn-padding-x);
+  border-radius: var(--btn-radius);
+  font-family: inherit;
+  font-size: var(--btn-font-size);
+  font-weight: var(--btn-font-weight);
   letter-spacing: -0.01em;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  white-space: nowrap;
+  transition: var(--btn-transition);
+  user-select: none;
+  text-decoration: none;
+  line-height: 1;
+  position: relative;
+  isolation: isolate;
+}
+
+/* Sheen de vidro líquido — brilho superior comum aos botões em pílula */
+.btn-primary::before,
+.btn-secondary::before,
+.btn-dark::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.btn-primary > *,
+.btn-secondary > *,
+.btn-dark > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── PRIMARY (azul, pílula sólida) ── */
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 6px 18px rgba(13, 77, 135, 0.2), 0 0 24px rgba(18, 101, 175, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 24px rgba(18, 101, 175, 0.3);
-  filter: brightness(1.05);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+  box-shadow: 0 10px 26px rgba(13, 77, 135, 0.26), 0 0 30px rgba(18, 101, 175, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
 }
 
+.btn-primary:active,
+.btn-primary.selected {
+  background: linear-gradient(135deg, #082e52 0%, var(--primary-dark) 100%);
+  box-shadow: 0 2px 10px rgba(18, 101, 175, 0.16);
+  transform: translateY(0);
+}
+
+.btn-primary:disabled,
+.btn-primary[disabled] {
+  background: #b0c8e8;
+  box-shadow: none;
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+}
+
+/* ── DARK (pílula sólida escura — CTA neutro de alto contraste) ── */
+.btn-dark {
+  background: linear-gradient(135deg, #1E3A52 0%, var(--text-main) 100%);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 6px 18px rgba(22, 50, 74, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.btn-dark:hover {
+  background: linear-gradient(135deg, #26455F 0%, #1E3A52 100%);
+  box-shadow: 0 10px 24px rgba(22, 50, 74, 0.24);
+  transform: translateY(-1px);
+}
+
+.btn-dark:active,
+.btn-dark.selected {
+  background: linear-gradient(135deg, #0F2334 0%, #1E3A52 100%);
+  box-shadow: 0 2px 10px rgba(22, 50, 74, 0.18);
+  transform: translateY(0);
+}
+
+.btn-dark:disabled,
+.btn-dark[disabled] {
+  background: #aeb9c2;
+  box-shadow: none;
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+}
+
+/* ── SECONDARY (vidro fosco / outline) ── */
 .btn-secondary {
-  background: #FFFFFF;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
   color: var(--text-main);
-  border: 1px solid rgba(18, 101, 175, 0.1);
-  padding: 0.85rem 1.6rem;
-  border-radius: 14px;
-  font-weight: 600;
-  font-size: 0.875rem;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: var(--shadow-sm);
+  border-color: rgba(18, 101, 175, 0.18);
+  box-shadow: 0 2px 10px rgba(18, 101, 175, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
 .btn-secondary:hover {
-  background: #F8FAFC;
-  border-color: rgba(18, 101, 175, 0.2);
-  box-shadow: 0 6px 16px rgba(18, 101, 175, 0.06);
+  background: #f0f6ff;
+  border-color: rgba(18, 101, 175, 0.35);
+  color: var(--primary);
+  box-shadow: 0 6px 18px rgba(18, 101, 175, 0.08);
   transform: translateY(-1px);
 }
+
+.btn-secondary:active,
+.btn-secondary.selected {
+  background: rgba(18, 101, 175, 0.08);
+  border-color: var(--primary);
+  color: var(--primary);
+  box-shadow: none;
+  transform: translateY(0);
+}
+
+.btn-secondary:disabled,
+.btn-secondary[disabled] {
+  background: #f5f7fa;
+  border-color: rgba(18, 101, 175, 0.08);
+  color: var(--text-muted);
+  box-shadow: none;
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+}
+
+/* ── DANGER (vermelho) ── */
+.btn-danger {
+  background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 4px 16px rgba(225, 29, 72, 0.16);
+}
+
+.btn-danger:hover {
+  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+  box-shadow: 0 8px 22px rgba(225, 29, 72, 0.22);
+  transform: translateY(-1px);
+}
+
+.btn-danger:active,
+.btn-danger.selected {
+  background: linear-gradient(135deg, #9f1239 0%, #be123c 100%);
+  box-shadow: 0 2px 10px rgba(225, 29, 72, 0.13);
+  transform: translateY(0);
+}
+
+.btn-danger:disabled,
+.btn-danger[disabled] {
+  background: #f4a3b3;
+  box-shadow: none;
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+}
+
+/* ── GHOST (transparente) ── */
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.btn-ghost:hover {
+  background: rgba(18, 101, 175, 0.06);
+  color: var(--primary);
+  border-color: transparent;
+}
+
+.btn-ghost:active,
+.btn-ghost.selected {
+  background: rgba(18, 101, 175, 0.1);
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.btn-ghost:disabled,
+.btn-ghost[disabled] {
+  color: var(--text-muted);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* ── TAMANHOS ── */
+.btn-sm {
+  height: 2rem;           /* 32px */
+  padding: 0 1rem;
+  font-size: 0.8rem;
+  gap: 0.35rem;
+}
+
+.btn-lg {
+  height: 3rem;           /* 48px */
+  padding: 0 2rem;
+  font-size: 0.95rem;
+  gap: 0.55rem;
+}
+
 
 /* ── LAYOUT ── */
 .sidebar {
   width: 280px;
   height: 100vh;
-  background: var(--bg-sidebar);
-  border-right: 1px solid var(--border);
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.88) 0%, rgba(255, 255, 255, 0.68) 100%);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-right: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 0 28px 28px 0;
   position: fixed;
   left: 0;
   top: 0;
@@ -139,7 +406,7 @@ h1, h2, h3, h4 {
   flex-direction: column;
   padding: 1.5rem;
   z-index: 100;
-  box-shadow: 2px 0 10px rgba(18, 101, 175, 0.02);
+  box-shadow: 4px 0 24px rgba(18, 101, 175, 0.06), inset -1px 0 0 rgba(255, 255, 255, 0.5);
 }
 
 .main-content {
@@ -149,13 +416,132 @@ h1, h2, h3, h4 {
   background: transparent;
 }
 
+/* ── STICKY PAGE HEADER — every section's top header stays pinned while its
+   content scrolls. Negative margins bleed it to the edges of .main-content's
+   own padding, then its own padding restores the visual spacing; the frosted
+   background masks content scrolling underneath once it's stuck. ── */
+.page-header-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  margin: -2.5rem -2.5rem 2rem -2.5rem;
+  padding: 1.75rem 2.5rem 1.25rem 2.5rem;
+  background: linear-gradient(180deg, rgba(247, 250, 253, 0.92) 0%, rgba(238, 244, 250, 0.88) 100%);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-bottom: 1px solid rgba(18, 101, 175, 0.06);
+}
+
+/* ── RESPONSIVE: tablet / smaller desktop (≤1180px) — sidebar collapses to an
+   icon-only rail; .main-content and .page-header-sticky shrink their padding
+   together so the sticky-header bleed math (see above) still lines up. ── */
+@media (max-width: 1180px) {
+  .sidebar {
+    width: 84px;
+    padding: 1.25rem 0.75rem;
+  }
+  .sidebar .nav-label,
+  .sidebar-brand-text,
+  .sidebar-section-label,
+  .sidebar-chevron {
+    display: none;
+  }
+  .sidebar .nav-item {
+    justify-content: center;
+    padding: 0.75rem;
+  }
+  .sidebar .sidebar-subnav {
+    margin-left: 0;
+    padding-left: 0;
+    border-left: none;
+    align-items: center;
+  }
+  .sidebar-user-pill {
+    justify-content: center;
+    padding: 0.6rem;
+  }
+  .sidebar-user-pill button {
+    display: none;
+  }
+
+  .main-content {
+    margin-left: 84px;
+    padding: 1.5rem;
+  }
+  .page-header-sticky {
+    margin: -1.5rem -1.5rem 1.5rem -1.5rem;
+    padding: 1.25rem 1.5rem 1rem 1.5rem;
+  }
+}
+
+/* ── RESPONSIVE: narrow tablet (≤820px) — trim padding further and let
+   anything still wider than the viewport scroll inside its own box instead
+   of the page, so the layout can't force a horizontal scrollbar. ── */
+@media (max-width: 820px) {
+  .main-content {
+    padding: 1rem;
+  }
+  .page-header-sticky {
+    margin: -1rem -1rem 1.25rem -1rem;
+    padding: 1rem 1rem 0.85rem 1rem;
+  }
+  .filter-bar {
+    padding: 0.85rem;
+  }
+}
+
+/* ── RESPONSIVE GRID UTILITIES — fixed N-column grids collapse gracefully on
+   tablet / smaller desktop instead of squeezing columns razor-thin. Apply
+   alongside an explicit `gap` inline style (these intentionally don't set
+   one, so call sites keep their existing spacing). ── */
+.grid-auto-2,
+.grid-auto-3,
+.grid-auto-4 {
+  display: grid;
+}
+.grid-auto-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-auto-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-auto-4 { grid-template-columns: repeat(4, 1fr); }
+.grid-auto-5 { grid-template-columns: repeat(5, 1fr); }
+
+/* Two-column "chart + side panel" splits — collapse to one column instead of
+   squeezing the narrower panel unreadably thin. */
+.grid-split-2-1,
+.grid-split-3-2 {
+  display: grid;
+}
+.grid-split-2-1 { grid-template-columns: 2fr 1fr; }
+.grid-split-3-2 { grid-template-columns: 1.5fr 1fr; }
+
+@media (max-width: 1180px) {
+  .grid-auto-3,
+  .grid-auto-4,
+  .grid-auto-5 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 1024px) {
+  .grid-split-2-1,
+  .grid-split-3-2 {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 640px) {
+  .grid-auto-2,
+  .grid-auto-3,
+  .grid-auto-4,
+  .grid-auto-5 {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ── NAV ITEMS ── */
 .nav-item {
   display: flex;
   align-items: center;
   gap: 0.85rem;
   padding: 0.75rem 1rem;
-  border-radius: 12px;
+  border-radius: 999px;
   color: var(--text-secondary);
   text-decoration: none;
   transition: all 0.2s ease;
@@ -165,14 +551,83 @@ h1, h2, h3, h4 {
 }
 
 .nav-item:hover {
-  background: rgba(18, 101, 175, 0.04);
+  background: rgba(18, 101, 175, 0.06);
   color: var(--primary);
 }
 
 .nav-item.active {
-  background: rgba(18, 101, 175, 0.08);
-  color: var(--primary);
+  position: relative;
+  background: linear-gradient(135deg, rgba(18, 101, 175, 0.68) 0%, rgba(27, 118, 202, 0.68) 100%);
+  backdrop-filter: blur(16px) saturate(200%);
+  -webkit-backdrop-filter: blur(16px) saturate(200%);
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  color: #ffffff;
   font-weight: 700;
+  box-shadow: 0 6px 16px rgba(18, 101, 175, 0.16), 0 0 20px rgba(18, 101, 175, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  transition: all 0.25s ease;
+}
+
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 60%);
+  pointer-events: none;
+}
+
+.nav-item.active > * {
+  position: relative;
+  z-index: 1;
+}
+
+.nav-item.active:hover {
+  color: #ffffff;
+}
+
+/* ── CHECKBOX (rounded, custom-drawn — native checkboxes ignore border-radius
+   on most Windows browser engines, so we replace the box entirely) ── */
+.checkbox-rounded {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  box-sizing: border-box;
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  min-height: 18px;
+  max-width: 18px;
+  max-height: 18px;
+  padding: 0;
+  margin: 0;
+  border-radius: 5px;
+  border: 1.5px solid rgba(18, 101, 175, 0.35);
+  background: #ffffff;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.checkbox-rounded:hover {
+  border-color: var(--primary);
+}
+
+.checkbox-rounded:checked {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.checkbox-rounded:checked::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 5px;
+  height: 9px;
+  border: solid #ffffff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
 }
 
 /* ── BADGES ── */
@@ -210,7 +665,7 @@ h1, h2, h3, h4 {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   border-bottom: 1px solid var(--border);
-  background: transparent;
+  background: rgba(18, 101, 175, 0.03);
 }
 
 .enterprise-table td {
@@ -218,11 +673,20 @@ h1, h2, h3, h4 {
   font-size: 0.875rem;
   color: var(--text-main);
   border-bottom: 1px solid var(--border-subtle);
-  transition: background 0.2s ease;
+  border-left: 3px solid transparent;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.enterprise-table td:first-child {
+  border-left-color: transparent;
+}
+
+.enterprise-table tr:hover td:first-child {
+  border-left-color: var(--primary);
 }
 
 .enterprise-table tr:hover td {
-  background: rgba(18, 101, 175, 0.02);
+  background: rgba(18, 101, 175, 0.035);
 }
 
 /* ── INPUTS E FORMULÁRIOS ── */
@@ -264,21 +728,300 @@ input::placeholder, textarea::placeholder {
   position: fixed;
   top: 0;
   left: 0;
+  right: 0;
+  bottom: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(17, 17, 17, 0.4);
+  background: rgba(15, 23, 42, 0.55);
   backdrop-filter: blur(4px);
-  z-index: 9999;
+  z-index: 99999;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding-left: 280px;      /* centraliza o modal na área de conteúdo (após a sidebar) */
+  padding-right: 1.5rem;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+  overflow-y: auto;
 }
 
 .modal-content {
-  background: var(--bg-card);
-  border: 1px solid rgba(18, 101, 175, 0.08);
-  border-radius: 24px;
-  padding: 2.5rem;
-  box-shadow: var(--shadow-hover);
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 255, 255, 0.9) 100%);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.9);
   position: relative;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+@media (max-width: 1024px) {
+  .modal-backdrop {
+    padding-left: 1.5rem;
+  }
+}
+
+/* ── BUTTON GLOBAL ENFORCEMENT (override inline styles) ── */
+/* Garante que qualquer btn-* sempre seja oval, independente de style={} inline */
+[class*="btn-primary"],
+[class*="btn-secondary"],
+[class*="btn-danger"],
+[class*="btn-ghost"],
+[class*="btn-dark"] {
+  border-radius: 999px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+}
+
+/* ── ANIMAÇÕES ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.fade-up {
+  animation: fadeUp 0.35s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+/* ── LOGIN BACKGROUND — light, mostly-neutral base; the only color lives in
+   a soft diagonal "wave" band that sweeps left → right while the card on
+   top stays fully static. ── */
+.login-bg {
+  background: linear-gradient(160deg, #F8FBFE 0%, #F1F6FC 100%);
+}
+
+/* Testimonial wall: tilted back in 3D (perspective + rotateX/rotateZ, like
+   the reference — "lying down" rather than flat-on) rows of glass-cards
+   (same recipe as .glass-card elsewhere) scrolling horizontally, alternating
+   rows running opposite directions. A flat radial fade sits on top (outside
+   the tilted layer, so it isn't tilted itself) to recede the wall behind the
+   centered login card instead of competing with it. */
+.login-cards-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  perspective: 1400px;
+}
+
+.login-cards-grid {
+  position: absolute;
+  inset: -20% -10%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.5rem;
+  transform: rotateX(50deg) rotateZ(-9deg) scale(1.35);
+  transform-style: preserve-3d;
+}
+
+.login-cards-row {
+  display: flex;
+  gap: 1.5rem;
+  animation-name: loginCardsScrollX;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+/* Pause the row's scroll while a card in it is hovered, so there's time to
+   see the flip instead of the card sliding out from under the cursor. */
+.login-cards-row:hover {
+  animation-play-state: paused;
+}
+
+@keyframes loginCardsScrollX {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* Flip wrapper: on mount, each card scatters in from a random offset/angle
+   and springs into place (staggered per-card delay); on hover, it flips
+   between the front (testimonial) and back (verified badge) faces. */
+.login-testi-flip {
+  position: relative;
+  flex-shrink: 0;
+  width: 260px;
+  height: 158px;
+  pointer-events: auto;
+  perspective: 1000px;
+  cursor: default;
+  animation: loginCardEnter 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: var(--edelay, 0s);
+}
+
+@keyframes loginCardEnter {
+  0%   { transform: translate(var(--sx, 0), var(--sy, 0)) rotate(var(--srot, 0deg)) scale(0.6); opacity: 0; }
+  100% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 1; }
+}
+
+.login-testi-card {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.62) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 18px;
+  padding: 1.1rem 1.25rem;
+  box-shadow: 0 10px 26px rgba(18, 101, 175, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  backface-visibility: hidden;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: rotateY(0deg);
+}
+
+.login-testi-card--back {
+  transform: rotateY(180deg);
+  background: linear-gradient(150deg, var(--primary) 0%, var(--primary-dark) 100%);
+  border-color: rgba(255, 255, 255, 0.18);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-align: center;
+}
+
+.login-testi-flip:hover .login-testi-card {
+  transform: rotateY(180deg);
+}
+
+.login-testi-flip:hover .login-testi-card--back {
+  transform: rotateY(360deg);
+}
+
+.login-testi-back-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.login-testi-back-sub {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.login-testi-head {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 0.65rem;
+}
+
+.login-testi-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 0.75rem;
+}
+
+.login-testi-name {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.login-testi-flag {
+  font-size: 0.6rem;
+  font-weight: 800;
+  color: var(--primary);
+  background: rgba(18, 101, 175, 0.08);
+  border-radius: 999px;
+  padding: 0.1rem 0.4rem;
+  flex-shrink: 0;
+}
+
+.login-testi-handle {
+  font-size: 0.72rem;
+  color: var(--text-faint);
+}
+
+.login-testi-quote {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.login-cards-fade {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 58% 55% at 50% 50%, rgba(248, 251, 254, 0.97) 0%, rgba(248, 251, 254, 0.6) 42%, rgba(248, 251, 254, 0.18) 72%, rgba(248, 251, 254, 0) 100%);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-cards-row {
+    animation: none;
+  }
+  .login-testi-flip {
+    animation: none;
+  }
+  .login-testi-card {
+    transition: none;
+  }
+}
+
+/* ── UTILITÁRIO: botão icon-only (quadrado/circular) ── */
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: 1.5px solid transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+}
+
+.btn-icon:hover {
+  background: rgba(18, 101, 175, 0.07);
+  color: var(--primary);
+}
+
+.btn-icon.btn-icon-danger:hover {
+  background: rgba(225, 29, 72, 0.08);
+  color: #e11d48;
+}
+
+/* Liquid-glass variant: frosted pill, same recipe as .btn-secondary, for
+   icon-only actions that should read as a first-class platform button
+   rather than a plain ghost icon. */
+.btn-icon-glass {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  border: 1px solid rgba(18, 101, 175, 0.16);
+  color: var(--primary);
+  box-shadow: 0 4px 14px rgba(18, 101, 175, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.btn-icon-glass:hover {
+  background: #f0f6ff;
+  border-color: rgba(18, 101, 175, 0.32);
+  box-shadow: 0 8px 20px rgba(18, 101, 175, 0.14);
+  transform: translateY(-1px);
 }

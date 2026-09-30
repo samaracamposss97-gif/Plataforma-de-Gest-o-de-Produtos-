@@ -12,22 +12,24 @@ import {
   PenTool,
   PieChart,
   CircleDollarSign,
-  LogOut
+  LogOut,
+  Users
 } from 'lucide-react';
 
 const menuItems = [
+  { label: 'Portfólio',           path: '/produtos',    icon: Package },
   { 
     label: 'Dashboards', 
     icon: LayoutDashboard,
     subItems: [
-      { label: 'Visão Gerencial', path: '/', icon: PieChart },
+      { label: 'Visão Gerencial', path: '/dashboard', icon: PieChart },
       { label: 'Visão Financeira', path: '/dashboard-financeiro', icon: CircleDollarSign },
     ]
   },
-  { label: 'Portfólio',           path: '/produtos',    icon: Package },
   { label: 'Evolução',            path: '/evolucao',    icon: TrendingUp },
   { label: 'Biblioteca',          path: '/evidencias',  icon: BookOpen },
   { label: 'Apoio à escrita',     path: '/apoio-escrita', icon: PenTool },
+  { label: 'Equipes',             path: '/equipes',      icon: Users },
 ];
 
 interface SidebarProps {
@@ -46,10 +48,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
           <img
             src="/logo_sesi.png"
             alt="Centro de Inovação SESI"
+            className="sidebar-logo"
             style={{ width: '100%', maxWidth: '160px', height: 'auto', objectFit: 'contain' }}
           />
         </div>
-        <div style={{
+        <div className="sidebar-brand-text" style={{
           marginTop: '1rem',
           textAlign: 'center',
           fontSize: '0.75rem',
@@ -63,7 +66,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
       </div>
 
       {/* Section label */}
-      <div style={{
+      <div className="sidebar-section-label" style={{
         fontSize: '0.7rem',
         fontWeight: 700,
         letterSpacing: '0.05em',
@@ -79,55 +82,58 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
       <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.2rem', overflowY: 'auto' }} className="custom-scrollbar">
         {menuItems.map((item, idx) => {
           const Icon = item.icon;
-          
+
           if (item.subItems) {
             const isAnyChildActive = item.subItems.some(sub => 
-              sub.path === '/' ? location.pathname === '/' : location.pathname.startsWith(sub.path)
+              sub.path === '/dashboard' ? location.pathname === '/dashboard' : location.pathname.startsWith(sub.path)
             );
 
             return (
               <div key={idx} style={{ marginBottom: '0.2rem' }}>
-                <div 
-                  className={`nav-item ${isAnyChildActive && !isDashboardsOpen ? 'active' : ''}`} 
+                <div
+                  className={`nav-item ${isAnyChildActive && !isDashboardsOpen ? 'active' : ''}`}
                   onClick={() => setIsDashboardsOpen(!isDashboardsOpen)}
-                  style={{ 
-                    cursor: 'pointer', 
-                    display: 'flex', 
-                    justifyContent: 'space-between', 
+                  style={{
+                    cursor: 'pointer',
+                    display: 'flex',
+                    justifyContent: 'space-between',
                     alignItems: 'center',
-                    background: isDashboardsOpen ? 'rgba(18, 101, 175, 0.02)' : 'transparent',
+                    background: isDashboardsOpen ? 'rgba(18, 101, 175, 0.06)' : 'transparent',
                     color: isDashboardsOpen || isAnyChildActive ? 'var(--primary)' : 'var(--text-secondary)'
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-                    <Icon size={18} />
-                    <span style={{ flex: 1, fontWeight: isDashboardsOpen || isAnyChildActive ? 700 : 600 }}>{item.label}</span>
+                    <Icon size={17} strokeWidth={2} />
+                    <span className="nav-label" style={{ flex: 1, fontWeight: isDashboardsOpen || isAnyChildActive ? 700 : 600 }}>{item.label}</span>
                   </div>
-                  {isDashboardsOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                  <span className="sidebar-chevron">{isDashboardsOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}</span>
                 </div>
-                
+
                 {isDashboardsOpen && (
-                  <div style={{ 
-                    display: 'flex', 
-                    flexDirection: 'column', 
-                    gap: '0.15rem', 
-                    marginLeft: '1.25rem', 
+                  <div className="sidebar-subnav" style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.15rem',
+                    marginLeft: '1.25rem',
                     marginTop: '0.25rem',
                     paddingLeft: '0.5rem',
-                    borderLeft: '1px solid var(--border-subtle)'
+                    borderLeft: '2px solid rgba(18, 101, 175, 0.12)'
                   }}>
-                    {item.subItems.map(sub => (
-                      <NavLink
-                        key={sub.path}
-                        to={sub.path}
-                        end={sub.path === '/'}
-                        className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
-                        style={{ padding: '0.65rem 0.85rem', fontSize: '0.82rem' }}
-                      >
-                        <sub.icon size={16} />
-                        <span style={{ flex: 1 }}>{sub.label}</span>
-                      </NavLink>
-                    ))}
+                    {item.subItems.map(sub => {
+                      const SubIcon = sub.icon;
+                      return (
+                        <NavLink
+                          key={sub.path}
+                          to={sub.path}
+                          end={sub.path === '/dashboard'}
+                          className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+                          style={{ padding: '0.65rem 0.85rem', fontSize: '0.82rem' }}
+                        >
+                          <SubIcon size={15} strokeWidth={2} />
+                          <span className="nav-label" style={{ flex: 1 }}>{sub.label}</span>
+                        </NavLink>
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -141,8 +147,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
               end={item.path === '/'}
               className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
             >
-              <Icon size={18} />
-              <span style={{ flex: 1 }}>{item.label}</span>
+              <Icon size={17} strokeWidth={2} />
+              <span className="nav-label" style={{ flex: 1 }}>{item.label}</span>
             </NavLink>
           );
         })}
@@ -157,22 +163,24 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
         gap: '0.15rem',
         marginTop: '1rem'
       }}>
-        {[
-          { label: 'Configurações', icon: Settings },
-          { label: 'Suporte',       icon: HelpCircle },
-        ].map(({ label, icon: Icon }) => (
-          <button
-            key={label}
-            className="nav-item"
-            style={{ background: 'transparent', border: 'none', width: '100%', cursor: 'pointer', textAlign: 'left' }}
-          >
-            <Icon size={18} />
-            <span style={{ flex: 1 }}>{label}</span>
-          </button>
-        ))}
+        <NavLink
+          to="/configuracoes"
+          className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+        >
+          <Settings size={17} strokeWidth={2} />
+          <span className="nav-label" style={{ flex: 1 }}>Configurações</span>
+        </NavLink>
+        <button
+          className="nav-item"
+          onClick={() => alert('Central de Suporte CIS: Entre em contato pelo e-mail suporte@cis.sesi.org.br')}
+          style={{ background: 'transparent', border: 'none', width: '100%', cursor: 'pointer', textAlign: 'left' }}
+        >
+          <HelpCircle size={17} strokeWidth={2} />
+          <span className="nav-label" style={{ flex: 1 }}>Suporte</span>
+        </button>
 
         {/* User profile pill */}
-        <div style={{
+        <div className="sidebar-user-pill" style={{
           marginTop: '1rem',
           padding: '0.75rem',
           borderRadius: 12,
@@ -192,7 +200,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
         }}
         >
           <div style={{
-            width: 34, height: 34, borderRadius: 8,
+            width: 34, height: 34, borderRadius: '50%',
             background: 'linear-gradient(135deg, var(--primary), var(--primary-hover))',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: '0.8rem', fontWeight: 700, color: 'white', flexShrink: 0,
@@ -200,13 +208,13 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout }) => {
           }}>
             GS
           </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
+          <div className="nav-label sidebar-user-info" style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               Gestor CIS
             </div>
             <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Administrador</div>
           </div>
-          <button 
+          <button
             onClick={(e) => {
               e.stopPropagation();
               onLogout();

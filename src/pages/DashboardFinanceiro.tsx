@@ -8,6 +8,7 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar, PieChart, Pie, Cell, Legend
 } from 'recharts';
+import DonutProgress from '../components/DonutProgress';
 
 /* ── MOCK DATA ── */
 const kpiData = {
@@ -47,10 +48,10 @@ const productCostData = [
 ];
 
 const riskProjects = [
-  { id: 1, name: 'App Gestão Industrial', budget: 'R$ 1.8M', consumed: 'R$ 1.95M', deviation: '+8.3%', status: 'Em Risco' },
-  { id: 2, name: 'Portal do Cidadão V2', budget: 'R$ 2.5M', consumed: 'R$ 2.10M', deviation: '-16.0%', status: 'No Prazo' },
-  { id: 3, name: 'API Integração SESI', budget: 'R$ 1.2M', consumed: 'R$ 1.10M', deviation: '-8.3%', status: 'No Prazo' },
-  { id: 4, name: 'Plataforma RH', budget: 'R$ 800k', consumed: 'R$ 850k', deviation: '+6.2%', status: 'Alerta' },
+  { id: 1, name: 'App Gestão Industrial', previsto: 'R$ 1.8M', realizado: 'R$ 1.95M', deviation: '+8.3%', status: 'Em Risco' },
+  { id: 2, name: 'Portal do Cidadão V2', previsto: 'R$ 2.5M', realizado: 'R$ 2.10M', deviation: '-16.0%', status: 'No Prazo' },
+  { id: 3, name: 'API Integração SESI', previsto: 'R$ 1.2M', realizado: 'R$ 1.10M', deviation: '-8.3%', status: 'No Prazo' },
+  { id: 4, name: 'Plataforma RH', previsto: 'R$ 800k', realizado: 'R$ 850k', deviation: '+6.2%', status: 'Alerta' },
 ];
 
 const PIE_COLORS = ['#1265AF', '#5BA9F0', '#F59E0B', '#8B5CF6'];
@@ -85,9 +86,9 @@ const DashboardFinanceiro = () => {
     <div style={{ paddingBottom: '4rem' }} className="fade-up">
 
       {/* ── HEADER ── */}
-      <header style={{ marginBottom: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <header className="page-header-sticky" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div>
-          <h1 style={{ fontSize: '1.85rem', fontWeight: 800, letterSpacing: '-0.03em', color: 'var(--text-main)', marginBottom: '0.25rem' }}>
+          <h1 style={{ fontSize: '1.85rem', fontWeight: 500, letterSpacing: '-0.03em', color: 'var(--text-main)', marginBottom: '0.25rem' }}>
             Dashboard Financeiro
           </h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: 500 }}>
@@ -121,38 +122,63 @@ const DashboardFinanceiro = () => {
       </header>
 
       {/* ── KPIs EXECUTIVOS ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '1.25rem', marginBottom: '2rem' }}>
+      <div className="grid-auto-5" style={{ gap: '1.25rem', marginBottom: '2rem' }}>
         {[
           { label: 'Orçamento Previsto', value: kpiData.orcamentoPrevisto, sub: 'Para o período', icon: Target, color: 'var(--primary)', bg: 'rgba(18,101,175,0.08)' },
           { label: 'Valor Aprovado', value: kpiData.valorAprovado, sub: '87% do previsto', icon: DollarSign, color: 'var(--success)', bg: 'var(--success-bg)' },
-          { label: 'Recursos Aplicados', value: kpiData.recursosAplicados, sub: 'Consumido até agora', icon: Activity, color: 'var(--warning)', bg: 'var(--warning-bg)' },
-          { label: 'Saldo Disponível', value: kpiData.saldoDisponivel, sub: 'Caixa restante', icon: Briefcase, color: 'var(--primary-light)', bg: 'rgba(91,169,240,0.12)' },
+          { label: 'Recursos Aplicados', value: kpiData.recursosAplicados, sub: 'Consumido até agora', icon: Activity, color: 'var(--warning)', bg: 'var(--warning-bg)', progress: kpiData.percentualConsumido },
+          { label: 'Saldo Disponível', value: kpiData.saldoDisponivel, sub: 'Caixa restante', icon: Briefcase, color: 'var(--primary-light)', bg: 'rgba(91,169,240,0.12)', spotlight: true },
           { label: 'Desvio Financeiro', value: kpiData.desvioFinanceiro, sub: 'Acima do planejado', icon: AlertTriangle, color: 'var(--danger)', bg: 'var(--danger-bg)' },
         ].map((kpi, idx) => (
-          <div key={idx} className="glass-card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <span style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-secondary)' }}>
-                {kpi.label}
-              </span>
-              <div style={{ width: 32, height: 32, borderRadius: 10, background: kpi.bg, color: kpi.color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <kpi.icon size={16} strokeWidth={2} />
+          kpi.spotlight ? (
+            <div key={idx} className="gradient-card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <span style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'rgba(255,255,255,0.75)' }}>
+                  {kpi.label}
+                </span>
+                <div style={{ width: 32, height: 32, borderRadius: 10, background: 'rgba(255,255,255,0.18)', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <kpi.icon size={16} strokeWidth={2} />
+                </div>
+              </div>
+              <div>
+                <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#ffffff', lineHeight: 1.1, marginBottom: '0.25rem' }}>
+                  {kpi.value}
+                </div>
+                <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'rgba(255,255,255,0.8)' }}>
+                  {kpi.sub}
+                </div>
               </div>
             </div>
-            <div>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-main)', lineHeight: 1.1, marginBottom: '0.25rem' }}>
-                {kpi.value}
+          ) : (
+            <div key={idx} className="glass-card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <span style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-secondary)' }}>
+                  {kpi.label}
+                </span>
+                {kpi.progress !== undefined ? (
+                  <DonutProgress value={kpi.progress} size={38} strokeWidth={4} colorFrom="var(--warning)" colorTo="#D97706" label="" />
+                ) : (
+                  <div style={{ width: 32, height: 32, borderRadius: 10, background: kpi.bg, color: kpi.color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <kpi.icon size={16} strokeWidth={2} />
+                  </div>
+                )}
               </div>
-              <div style={{ fontSize: '0.75rem', fontWeight: 600, color: kpi.color === 'var(--danger)' ? kpi.color : 'var(--text-muted)' }}>
-                {kpi.sub}
+              <div>
+                <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-main)', lineHeight: 1.1, marginBottom: '0.25rem' }}>
+                  {kpi.value}
+                </div>
+                <div style={{ fontSize: '0.75rem', fontWeight: 600, color: kpi.color === 'var(--danger)' ? kpi.color : 'var(--text-muted)' }}>
+                  {kpi.sub}
+                </div>
               </div>
             </div>
-          </div>
+          )
         ))}
       </div>
 
       {/* ── GRÁFICOS ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
-        
+      <div className="grid-split-2-1" style={{ gap: '1.5rem', marginBottom: '1.5rem' }}>
+
         {/* Curva de Consumo */}
         <div className="glass-card" style={{ padding: '1.5rem 1.5rem 1rem 1.5rem', height: 400 }}>
           <div style={{ marginBottom: '1.5rem' }}>
@@ -175,8 +201,10 @@ const DashboardFinanceiro = () => {
               <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} dy={10} />
               <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} tickFormatter={v => `${v/1000}k`} />
               <Tooltip content={<CustomTooltip />} />
-              <Area type="monotone" dataKey="previsto" stroke="var(--text-muted)" strokeWidth={2} strokeDasharray="5 5" fillOpacity={1} fill="url(#colorPrevisto)" />
-              <Area type="monotone" dataKey="realizado" stroke="var(--primary)" strokeWidth={3} fillOpacity={1} fill="url(#colorRealizado)" />
+              <Area type="monotone" dataKey="previsto" stroke="var(--text-muted)" strokeWidth={2} strokeDasharray="5 5" fillOpacity={1} fill="url(#colorPrevisto)" dot={false} />
+              <Area type="monotone" dataKey="realizado" stroke="var(--primary)" strokeWidth={3} fillOpacity={1} fill="url(#colorRealizado)"
+                dot={{ r: 3, fill: 'var(--primary)', strokeWidth: 0 }}
+                activeDot={{ r: 7, fill: 'var(--primary)', stroke: '#ffffff', strokeWidth: 3 }} />
             </AreaChart>
           </ResponsiveContainer>
         </div>
@@ -230,11 +258,14 @@ const DashboardFinanceiro = () => {
       {/* ── ROW 2: Tabela & Distribuição ── */}
       <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '1.5rem' }}>
         
-        {/* Tabela de Projetos Analítica */}
+        {/* Análise do Orçamento do Produto */}
         <div className="glass-card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)' }}>Análise de Desvios por Produto</h3>
-            <button className="btn-secondary" style={{ padding: '0.5rem 1rem', fontSize: '0.75rem', borderRadius: 10 }}>Ver Todos</button>
+            <div>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '0.2rem' }}>Análise do Orçamento do Produto</h3>
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Comparativo Previsto · Realizado · Desvio · Status</p>
+            </div>
+            <button className="btn-dark btn-sm">Ver Todos</button>
           </div>
           
           <div style={{ overflowX: 'auto', flex: 1 }}>
@@ -242,8 +273,8 @@ const DashboardFinanceiro = () => {
               <thead>
                 <tr>
                   <th>Produto</th>
-                  <th>Orçamento</th>
-                  <th>Consumido</th>
+                  <th>Previsto</th>
+                  <th>Realizado</th>
                   <th>Desvio</th>
                   <th>Status</th>
                 </tr>
@@ -252,8 +283,8 @@ const DashboardFinanceiro = () => {
                 {riskProjects.map((p) => (
                   <tr key={p.id}>
                     <td style={{ fontWeight: 600, color: 'var(--primary)' }}>{p.name}</td>
-                    <td>{p.budget}</td>
-                    <td>{p.consumed}</td>
+                    <td style={{ fontWeight: 600 }}>{p.previsto}</td>
+                    <td>{p.realizado}</td>
                     <td>
                       <span style={{ color: p.deviation.startsWith('+') ? 'var(--danger)' : 'var(--success)', fontWeight: 700 }}>
                         {p.deviation}
@@ -279,13 +310,19 @@ const DashboardFinanceiro = () => {
           <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '1.5rem' }}>Consumo de Orçamento</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={productCostData} layout="vertical" margin={{ top: 0, right: 20, left: 20, bottom: 0 }}>
+              <defs>
+                <linearGradient id="grad_consumido" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="var(--primary-dark)" />
+                  <stop offset="100%" stopColor="var(--primary-light)" />
+                </linearGradient>
+              </defs>
               <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="rgba(18,101,175,0.05)" />
               <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--text-muted)' }} tickFormatter={v => `${v/1000}k`} />
               <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--text-main)', fontWeight: 600 }} width={90} />
               <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(18,101,175,0.04)' }} />
               <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', fontWeight: 600, paddingTop: '10px' }} />
-              <Bar dataKey="orcamento" name="Orçamento" fill="var(--text-faint)" radius={[0, 4, 4, 0]} barSize={12} />
-              <Bar dataKey="consumido" name="Consumido" fill="var(--primary)" radius={[0, 4, 4, 0]} barSize={12} />
+              <Bar dataKey="orcamento" name="Orçamento" fill="var(--text-faint)" radius={[6, 6, 6, 6]} barSize={12} isAnimationActive={false} />
+              <Bar dataKey="consumido" name="Consumido" fill="url(#grad_consumido)" radius={[6, 6, 6, 6]} barSize={12} isAnimationActive={false} />
             </BarChart>
           </ResponsiveContainer>
         </div>

@@ -93,7 +93,7 @@ const OracleChat = () => {
                 <Sparkles size={20} color="white" />
               </div>
               <div style={{ flex: 1 }}>
-                <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700, color: '#111111' }}>Oráculo CIS</h4>
+                <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700, color: '#333333' }}>Oráculo CIS</h4>
                 <div style={{ fontSize: '0.72rem', color: '#22C55E', display: 'flex', alignItems: 'center', gap: '0.3rem', marginTop: 2 }}>
                   <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#22C55E', display: 'inline-block', boxShadow: '0 0 0 2px rgba(34,197,94,0.25)' }} />
                   Online · IA Ativa
@@ -101,9 +101,9 @@ const OracleChat = () => {
               </div>
               <button
                 onClick={() => setIsOpen(false)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#111111', padding: 4, borderRadius: 8, display: 'flex' }}
-                onMouseEnter={e => e.currentTarget.style.color = '#111111'}
-                onMouseLeave={e => e.currentTarget.style.color = '#111111'}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#333333', padding: 4, borderRadius: 8, display: 'flex' }}
+                onMouseEnter={e => e.currentTarget.style.color = '#333333'}
+                onMouseLeave={e => e.currentTarget.style.color = '#333333'}
               >
                 <X size={18} />
               </button>
@@ -120,7 +120,7 @@ const OracleChat = () => {
                     background: msg.type === 'user'
                       ? 'linear-gradient(135deg, #1265AF, #1B76CA)'
                       : 'rgba(18,101,175,0.05)',
-                    color: msg.type === 'user' ? 'white' : '#111111',
+                    color: msg.type === 'user' ? 'white' : '#333333',
                     fontSize: '0.875rem',
                     lineHeight: 1.55,
                     border: msg.type === 'bot' ? '1px solid rgba(18,101,175,0.08)' : 'none',
@@ -130,7 +130,7 @@ const OracleChat = () => {
                   }}>
                     {msg.text}
                   </div>
-                  <div style={{ fontSize: '0.65rem', color: '#111111', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                  <div style={{ fontSize: '0.65rem', color: '#333333', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                     {msg.type === 'user' ? <User size={9} /> : <Bot size={9} />}
                     {msg.type === 'user' ? 'Você' : 'Oráculo'}
                   </div>
@@ -178,7 +178,7 @@ const OracleChat = () => {
                   onKeyPress={e => e.key === 'Enter' && handleSend()}
                   style={{
                     flex: 1, background: 'none', border: 'none',
-                    color: '#111111', outline: 'none', fontSize: '0.875rem',
+                    color: '#333333', outline: 'none', fontSize: '0.875rem',
                   }}
                 />
                 <button
