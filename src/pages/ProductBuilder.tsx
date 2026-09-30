@@ -603,6 +603,8 @@ const ProductBuilder = () => {
   const [productDetails, setProductDetails] = useState({
     name: id === '1' ? 'Portal do Cidadão V2' : id === '2' ? 'App Gestão Industrial' : 'Produto CIS',
     lead: 'Ana Silva',
+    manager: 'Ana Silva',
+    status: 'Em Desenvolvimento',
     category: 'Software / Institucional',
     deadline: '2026-06-20',
     link: '',

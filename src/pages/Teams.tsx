@@ -6,7 +6,8 @@ import {
   Shield,
   Filter,
   Check,
-  ExternalLink
+  ExternalLink,
+  Users
 } from 'lucide-react';
 import SearchAutocomplete from '../components/SearchAutocomplete';
 

@@ -491,7 +491,7 @@ const ProductBoard = () => {
                     <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                         <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--bg-app)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)', border: '1px solid var(--border-subtle)' }}>
-                          {React.cloneElement(cat.icon as React.ReactElement, { size: 16 })}
+                          {React.cloneElement(cat.icon as React.ReactElement<any>, { size: 16 })}
                         </div>
                         <div>
                           <div style={{ fontWeight: 600, color: 'var(--text-main)' }}>{product.name}</div>
