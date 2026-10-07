@@ -18,7 +18,8 @@ import {
   Server,
   LineChart,
   Cpu,
-  Filter
+  Filter,
+  ArrowUpRight
 } from 'lucide-react';
 
 interface Product {
@@ -530,8 +531,13 @@ const ProductBoard = () => {
           </table>
           </div>
           {filteredProducts.length > 0 && (
-            <div style={{ padding: '0.85rem 1.5rem', borderTop: '1px solid var(--border)', fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 500 }}>
-              {filteredProducts.length} produto{filteredProducts.length !== 1 ? 's' : ''} encontrado{filteredProducts.length !== 1 ? 's' : ''}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.85rem 1.5rem', borderTop: '1px solid var(--border)' }}>
+              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 500 }}>
+                {filteredProducts.length} produto{filteredProducts.length !== 1 ? 's' : ''} encontrado{filteredProducts.length !== 1 ? 's' : ''}
+              </span>
+              <button className="btn-secondary" style={{ height: 'auto', padding: '0.4rem 0.9rem', fontSize: '0.78rem' }} onClick={() => navigate('/evolucao')}>
+                Todas as Evoluções <ArrowUpRight size={14} />
+              </button>
             </div>
           )}
         </div>

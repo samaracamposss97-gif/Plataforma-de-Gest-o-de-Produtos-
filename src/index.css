@@ -496,7 +496,8 @@ h1, h2, h3, h4 {
    one, so call sites keep their existing spacing). ── */
 .grid-auto-2,
 .grid-auto-3,
-.grid-auto-4 {
+.grid-auto-4,
+.grid-auto-5 {
   display: grid;
 }
 .grid-auto-2 { grid-template-columns: repeat(2, 1fr); }

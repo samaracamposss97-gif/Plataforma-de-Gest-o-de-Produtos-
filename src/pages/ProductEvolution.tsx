@@ -135,134 +135,6 @@ const defaultPhasesList: PhaseData[] = [
     topics: ['Business Model Canvas', 'Diferenciais Competitivos', 'Proposta Única de Valor'], 
     records: [] 
   },
-  { 
-    id: 'cliente', 
-    title: 'Cliente do Produto', 
-    responsible: 'Diego Souza', 
-    progress: 40, 
-    startDate: '2026-03-11', 
-    endDate: '2026-03-25', 
-    evidence: '', 
-    learnings: '', 
-    decisions: '', 
-    difficulties: '', 
-    riscos: '', 
-    observations: '', 
-    topics: ['Segmento Alvo', 'Persona', 'Jornada do Cliente'], 
-    records: [] 
-  },
-  { 
-    id: 'beneficios', 
-    title: 'Benefícios', 
-    responsible: 'Ana Silva', 
-    progress: 0, 
-    startDate: '2026-03-26', 
-    endDate: '2026-04-05', 
-    evidence: '', 
-    learnings: '', 
-    decisions: '', 
-    difficulties: '', 
-    riscos: '', 
-    observations: '', 
-    topics: ['Benefícios Diretos', 'Benefícios Indiretos', 'Métricas de Impacto'], 
-    records: [] 
-  },
-  { 
-    id: 'custos', 
-    title: 'Composição de Custos', 
-    responsible: 'Bruno Costa', 
-    progress: 0, 
-    startDate: '2026-04-06', 
-    endDate: '2026-04-20', 
-    evidence: '', 
-    learnings: '', 
-    decisions: '', 
-    difficulties: '', 
-    riscos: '', 
-    observations: '', 
-    topics: ['Custos de Desenvolvimento', 'Custos Operacionais', 'Precificação'], 
-    records: [] 
-  },
-  { 
-    id: 'metodologia', 
-    title: 'Metodologia', 
-    responsible: 'Carla Dias', 
-    progress: 0, 
-    startDate: '2026-04-21', 
-    endDate: '2026-05-05', 
-    evidence: '', 
-    learnings: '', 
-    decisions: '', 
-    difficulties: '', 
-    riscos: '', 
-    observations: '', 
-    topics: ['Metodologia Aplicada', 'Framework de Gestão', 'Cerimônias e Rituais'], 
-    records: [] 
-  },
-  { 
-    id: 'escalabilidade', 
-    title: 'Escalabilidade', 
-    responsible: 'Diego Souza', 
-    progress: 0, 
-    startDate: '2026-05-06', 
-    endDate: '2026-05-20', 
-    evidence: '', 
-    learnings: '', 
-    decisions: '', 
-    difficulties: '', 
-    riscos: '', 
-    observations: '', 
-    topics: ['Capacidade de Crescimento', 'Arquitetura Escalável', 'Expansão Regional'], 
-    records: [] 
-  },
-  { 
-    id: 'canal', 
-    title: 'Canal de Vendas', 
-    responsible: 'Ana Silva', 
-    progress: 0, 
-    startDate: '2026-05-21', 
-    endDate: '2026-06-05', 
-    evidence: '', 
-    learnings: '', 
-    decisions: '', 
-    difficulties: '', 
-    riscos: '', 
-    observations: '', 
-    topics: ['Canais Diretos', 'Canais Indiretos', 'Parcerias Comerciais'], 
-    records: [] 
-  },
-  { 
-    id: 'mercado', 
-    title: 'Penetração de Mercado', 
-    responsible: 'Bruno Costa', 
-    progress: 0, 
-    startDate: '2026-06-06', 
-    endDate: '2026-06-25', 
-    evidence: '', 
-    learnings: '', 
-    decisions: '', 
-    difficulties: '', 
-    riscos: '', 
-    observations: '', 
-    topics: ['Estratégia Go-To-Market', 'Piloto Operacional', 'Rollout de Versões'], 
-    records: [] 
-  },
-  { 
-    id: 'repasses', 
-    title: 'Transferência de Tecnologia', 
-    responsible: 'Bruno Costa', 
-    progress: 0, 
-    startDate: '2026-06-26', 
-    endDate: '2026-07-15', 
-    evidence: '', 
-    learnings: '', 
-    decisions: '', 
-    difficulties: '', 
-    riscos: '', 
-    observations: '', 
-    topics: ['Transferência de Tecnologia', 'Documentação Final', 'Encerramento e Entrega'],
-    records: []
-  }
 ];
 
 // Macro etapas obrigatórias: presentes em todo produto, não podem ser excluídas
@@ -682,7 +554,7 @@ const ProductEvolution = () => {
                 {/* Scrollable Container for Nodes row — extra vertical padding keeps the node glow (ink overflow)
                     from being clipped flat by the overflow-y:auto the browser forces alongside overflowX:auto */}
                 <div className="custom-scrollbar" style={{ overflowX: 'auto', paddingTop: '1.5rem', paddingBottom: '1.5rem', marginTop: '-1.5rem', marginBottom: '-0.75rem', width: '100%' }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: `repeat(${phases.length}, 1fr)`, alignItems: 'flex-start', position: 'relative', padding: '0 0.25rem', width: '100%', gap: '0.2rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: `repeat(${phases.length}, minmax(140px, 1fr))`, alignItems: 'flex-start', position: 'relative', padding: '0 0.25rem', minWidth: '100%', gap: '0.2rem' }}>
                     {phases.map((phase, idx) => {
                       const isCompleted = phase.progress === 100;
                       const isCurrentActive = activeStage?.id === phase.id;
@@ -779,17 +651,15 @@ const ProductEvolution = () => {
                             marginTop: '0.75rem',
                             fontSize: '0.75rem',
                             fontWeight: isCurrentActive ? 700 : 600,
-                            color: isCompleted 
-                              ? 'var(--success)' 
-                              : isCurrentActive 
-                                ? 'var(--primary)' 
+                            color: isCompleted
+                              ? 'var(--success)'
+                              : isCurrentActive
+                                ? 'var(--primary)'
                                 : '#333333',
                             textAlign: 'center',
                             whiteSpace: 'nowrap',
                             transition: 'all 0.2s',
-                            maxWidth: '90px',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis'
+                            padding: '0 0.25rem'
                           }} title={phase.title}>
                             {phase.title}
                           </span>

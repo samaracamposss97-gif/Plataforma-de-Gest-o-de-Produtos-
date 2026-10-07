@@ -2810,59 +2810,62 @@ const ProductBuilder = () => {
 
   return (
     <div style={{ paddingBottom: '5rem' }}>
-      <button 
-        onClick={() => navigate('/produtos')} 
-        style={{ 
-          background: 'none', 
-          border: 'none', 
-          color: '#333333', 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: '0.5rem', 
-          cursor: 'pointer', 
-          marginBottom: '1.5rem', 
-          fontSize: '0.85rem',
-          fontWeight: 600,
-          padding: '6px 12px',
-          borderRadius: '8px',
-          transition: 'all 0.15s'
-        }}
-        onMouseEnter={e => {
-          e.currentTarget.style.background = 'rgba(18, 101, 175, 0.05)';
-          e.currentTarget.style.color = 'var(--primary)';
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.background = 'none';
-          e.currentTarget.style.color = '#333333';
-        }}
-      >
-        <ArrowLeft size={15} /> Voltar para o Portfólio
-      </button>
+      <header className="page-header-sticky" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+        <button
+          onClick={() => navigate('/produtos')}
+          style={{
+            background: 'none',
+            border: 'none',
+            color: '#333333',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            cursor: 'pointer',
+            alignSelf: 'flex-start',
+            fontSize: '0.85rem',
+            fontWeight: 600,
+            padding: '6px 12px',
+            margin: '-6px 0 0 -12px',
+            borderRadius: '8px',
+            transition: 'all 0.15s'
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.background = 'rgba(18, 101, 175, 0.05)';
+            e.currentTarget.style.color = 'var(--primary)';
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.background = 'none';
+            e.currentTarget.style.color = '#333333';
+          }}
+        >
+          <ArrowLeft size={15} /> Voltar para o Portfólio
+        </button>
 
-      <header className="page-header-sticky" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ flex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
-            <h1 style={{ fontSize: '2.25rem', margin: 0, fontWeight: 500, color: '#333333', letterSpacing: '-0.04em' }}>{productDetails.name}</h1>
-            <span className="badge badge-info" style={{ fontWeight: 700 }}>{productDetails.category}</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-            <span style={{ color: '#333333', fontSize: '0.85rem', fontWeight: 600 }}>ID: #{id}</span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', width: '220px' }}>
-              <span style={{ color: '#333333', fontSize: '0.85rem', fontWeight: 600, whiteSpace: 'nowrap' }}>Ciclo de Vida: {progress}%</span>
-              <div style={{ width: '100%', height: '6px', background: 'rgba(18, 101, 175, 0.08)', borderRadius: '10px', overflow: 'hidden' }}>
-                <div style={{ width: `${progress}%`, height: '100%', background: 'linear-gradient(95deg, var(--primary) 0%, var(--primary-light) 100%)', borderRadius: '10px' }}></div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ flex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
+              <h1 style={{ fontSize: '2.25rem', margin: 0, fontWeight: 500, color: '#333333', letterSpacing: '-0.04em' }}>{productDetails.name}</h1>
+              <span className="badge badge-info" style={{ fontWeight: 700 }}>{productDetails.category}</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+              <span style={{ color: '#333333', fontSize: '0.85rem', fontWeight: 600 }}>ID: #{id}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', width: '220px' }}>
+                <span style={{ color: '#333333', fontSize: '0.85rem', fontWeight: 600, whiteSpace: 'nowrap' }}>Ciclo de Vida: {progress}%</span>
+                <div style={{ width: '100%', height: '6px', background: 'rgba(18, 101, 175, 0.08)', borderRadius: '10px', overflow: 'hidden' }}>
+                  <div style={{ width: `${progress}%`, height: '100%', background: 'linear-gradient(95deg, var(--primary) 0%, var(--primary-light) 100%)', borderRadius: '10px' }}></div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div style={{ textAlign: 'right' }}>
-           <button 
-             onClick={() => setShowPreview(true)} 
-             className="btn-primary"
-             style={{ padding: '0.75rem 1.5rem', borderRadius: '14px' }}
-           >
-             <FileSearch size={18} /> Ver Relatório Completo
-           </button>
+          <div style={{ textAlign: 'right' }}>
+             <button
+               onClick={() => setShowPreview(true)}
+               className="btn-primary"
+               style={{ padding: '0.75rem 1.5rem', borderRadius: '14px' }}
+             >
+               <FileSearch size={18} /> Ver Relatório Completo
+             </button>
+          </div>
         </div>
       </header>
 

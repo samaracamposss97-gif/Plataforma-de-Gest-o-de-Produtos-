@@ -348,15 +348,13 @@ const Dashboard = () => {
           <ResponsiveContainer width="100%" height="80%">
             <BarChart data={bottleneckData} layout="vertical" margin={{ top: 0, right: 20, left: 0, bottom: 0 }}>
               <defs>
-                <linearGradient id="grad_danger"  x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#F87171" /><stop offset="100%" stopColor="#DC2626" /></linearGradient>
-                <linearGradient id="grad_warning" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#FBBF24" /><stop offset="100%" stopColor="#D97706" /></linearGradient>
+                <linearGradient id="grad_bottleneck" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="var(--primary-dark)" /><stop offset="100%" stopColor="var(--primary-light)" /></linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" horizontal vertical={false} />
               <XAxis type="number" axisLine={false} tickLine={false} fontSize={12} tick={{ fill: "var(--text-muted)" }} />
               <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} fontSize={12} width={140} tick={{ fill: "var(--text-main)", fontWeight: 500 }} />
               <Tooltip content={<CustomTooltip />} cursor={{ fill: "var(--info-bg)" }} />
-              <Bar dataKey="count"    fill="url(#grad_danger)"  radius={[0,6,6,0]} name="Ocorrências"          barSize={18} />
-              <Bar dataKey="avgDelay" fill="url(#grad_warning)" radius={[0,6,6,0]} name="Dias Médio de Atraso" barSize={18} />
+              <Bar dataKey="count" fill="url(#grad_bottleneck)" radius={[0,6,6,0]} name="Ocorrências" barSize={22} />
             </BarChart>
           </ResponsiveContainer>
         </div>
