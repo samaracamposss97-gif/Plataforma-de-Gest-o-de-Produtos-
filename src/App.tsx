@@ -10,7 +10,8 @@ import OracleChat from './components/OracleChat';
 import ApoioEscrita from './pages/ApoioEscrita';
 import DashboardFinanceiro from './pages/DashboardFinanceiro';
 import Login from './pages/Login';
-import Teams from './pages/Teams';
+import Membros from './pages/Membros';
+import Usuarios from './pages/Usuarios';
 import SettingsPage from './pages/Settings';
 
 function App() {
@@ -34,7 +35,8 @@ function App() {
           <Route path="/evolucao" element={<ProductEvolution />} />
           <Route path="/evidencias" element={<EvidenceRepository />} />
           <Route path="/apoio-escrita" element={<ApoioEscrita />} />
-          <Route path="/equipes" element={<Teams />} />
+          <Route path="/membros" element={<Membros />} />
+          <Route path="/usuarios" element={<Usuarios />} />
           <Route path="/configuracoes" element={<SettingsPage />} />
         </Routes>
       </main>

@@ -13,7 +13,8 @@ import {
   PieChart,
   CircleDollarSign,
   LogOut,
-  Users
+  Users,
+  UserCog
 } from 'lucide-react';
 
 const menuItems = [
@@ -29,7 +30,8 @@ const menuItems = [
   { label: 'Evolução',            path: '/evolucao',    icon: TrendingUp },
   { label: 'Biblioteca',          path: '/evidencias',  icon: BookOpen },
   { label: 'Apoio à escrita',     path: '/apoio-escrita', icon: PenTool },
-  { label: 'Equipes',             path: '/equipes',      icon: Users },
+  { label: 'Membros',             path: '/membros',      icon: Users },
+  { label: 'Usuários',            path: '/usuarios',     icon: UserCog },
 ];
 
 interface SidebarProps {

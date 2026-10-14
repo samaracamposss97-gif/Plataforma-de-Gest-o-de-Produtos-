@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { MEMBERS_STORAGE_KEY, defaultMembers } from './Membros';
 import { 
   ArrowLeft, 
   CheckCircle2, 
@@ -167,19 +168,13 @@ const MultiSelectDropdown = ({
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // Sourced from the "Membros" roster (src/pages/Membros.tsx) — the same people
+  // who can be mentioned/associated elsewhere on the platform.
   const users = React.useMemo(() => {
-    const saved = localStorage.getItem('cis_users');
+    const saved = localStorage.getItem(MEMBERS_STORAGE_KEY);
     if (saved) return JSON.parse(saved);
-    const defaults = [
-      { id: '1', name: 'Ana Silva', email: 'ana.silva@sesi.org.br', role: 'Gestora Responsável', avatarColor: '#1265af' },
-      { id: '2', name: 'Bruno Costa', email: 'bruno.costa@sesi.org.br', role: 'Product Owner', avatarColor: '#10b981' },
-      { id: '3', name: 'Carla Dias', email: 'carla.dias@sesi.org.br', role: 'Scrum Master', avatarColor: '#f59e0b' },
-      { id: '4', name: 'Diego Souza', email: 'diego.souza@sesi.org.br', role: 'Desenvolvedor Frontend', avatarColor: '#ec4899' },
-      { id: '5', name: 'Larissa Gomes', email: 'larissa.gomes@sesi.org.br', role: 'Desenvolvedor Backend', avatarColor: '#8b5cf6' },
-      { id: '6', name: 'Marcos Oliveira', email: 'marcos.oliveira@sesi.org.br', role: 'Analista de QA', avatarColor: '#3b82f6' }
-    ];
-    localStorage.setItem('cis_users', JSON.stringify(defaults));
-    return defaults;
+    localStorage.setItem(MEMBERS_STORAGE_KEY, JSON.stringify(defaultMembers));
+    return defaultMembers;
   }, []);
 
   const selectedList = value ? value.split(',').map(s => s.trim()).filter(Boolean) : [];
@@ -3226,13 +3221,13 @@ const ProductBuilder = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              style={{ maxWidth: '900px', width: '100%', maxHeight: '90vh', overflowY: 'auto' }}
+              style={{ maxWidth: '900px', width: '100%', maxHeight: '90vh', overflowY: 'auto', padding: 0 }}
             >
               <div style={{
                 display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                 borderBottom: '2px solid rgba(18, 101, 175, 0.1)', flexWrap: 'wrap', gap: '1rem',
                 position: 'sticky', top: 0, zIndex: 5,
-                margin: '-2rem -2rem 1.5rem -2rem', padding: '2rem 2rem 1rem 2rem',
+                padding: '1rem 2rem',
                 background: 'linear-gradient(165deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.94) 100%)',
                 backdropFilter: 'blur(24px) saturate(180%)', WebkitBackdropFilter: 'blur(24px) saturate(180%)',
                 borderRadius: '20px 20px 0 0',
@@ -3257,6 +3252,8 @@ const ProductBuilder = () => {
                   </button>
                 </div>
               </div>
+
+              <div style={{ padding: '1.5rem 2rem 2rem 2rem' }}>
 
               {/* Save Version Panel */}
               {showSavePanel && (
@@ -3414,6 +3411,7 @@ const ProductBuilder = () => {
                   <h3 style={{ fontSize: '1.25rem', borderBottom: '1px solid rgba(0,0,0,0.1)', paddingBottom: '0.5rem', marginBottom: '1rem', color: 'var(--primary)' }}>8. Referências Bibliográficas</h3>
                   <p style={{ fontSize: '0.9rem', color: '#333' }}>Normas regulamentares, artigos acadêmicos, manuais técnicos e bases legais de governança estratégica que fundamentam a arquitetura do produto estão indexados na base do conhecimento.</p>
                 </section>
+              </div>
               </div>
             </motion.div>
           </div>

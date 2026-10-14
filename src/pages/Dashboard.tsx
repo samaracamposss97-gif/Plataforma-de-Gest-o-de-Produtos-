@@ -30,7 +30,6 @@ import {
 import {
   products,
   alertsData,
-  bottleneckData,
   avgTimePerStageData,
   alertColors,
 } from "../data/dashboardData";
@@ -56,6 +55,23 @@ const ICON_MAP: Record<string, React.ReactNode> = {
   FileCheck:     <FileCheck size={16} />,
   AlertCircle:   <AlertCircle size={16} />,
   ShieldCheck:   <ShieldCheck size={16} />,
+};
+
+// ── Stage-name tick — abbreviates the longer stage names so all 4 fit
+//    horizontally on the narrow 4-category stage charts below, without
+//    rotating the labels or overlapping neighbors. ─────────────────────────
+const STAGE_ABBR: Record<string, string> = {
+  'Planejamento': 'Planej.',
+  'Desenvolvimento': 'Desenv.',
+};
+const StageAxisTick = (props: any) => {
+  const { x, y, payload } = props;
+  const label = STAGE_ABBR[payload.value] || payload.value;
+  return (
+    <text x={x} y={y} dy={14} textAnchor="middle" fill="var(--text-muted)" fontSize={11}>
+      {label}
+    </text>
+  );
 };
 
 // ── CustomTooltip (memoised) ─────────────────────────────────────────────────
@@ -335,31 +351,6 @@ const Dashboard = () => {
         {kpiCards.map((card, i) => <KpiCard key={i} {...card} variant={i} />)}
       </div>
 
-      {/* CHARTS ROW 1 – Impedimentos */}
-      <div style={{ marginBottom: "1.5rem" }}>
-        <div className="glass-card" style={{ height: 340, padding: "1.5rem 1.5rem 1rem 1.5rem" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.5rem" }}>
-            <div>
-              <h3 style={{ fontSize: "1.05rem", fontWeight: 700, color: "var(--text-main)", marginBottom: "0.2rem" }}>Impedimentos (Frequência)</h3>
-              <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>Ocorrências e impacto por tipo de bloqueio · Últimos 30 dias</p>
-            </div>
-            <span className="badge badge-danger">Atenção</span>
-          </div>
-          <ResponsiveContainer width="100%" height="80%">
-            <BarChart data={bottleneckData} layout="vertical" margin={{ top: 0, right: 20, left: 0, bottom: 0 }}>
-              <defs>
-                <linearGradient id="grad_bottleneck" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="var(--primary-dark)" /><stop offset="100%" stopColor="var(--primary-light)" /></linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" horizontal vertical={false} />
-              <XAxis type="number" axisLine={false} tickLine={false} fontSize={12} tick={{ fill: "var(--text-muted)" }} />
-              <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} fontSize={12} width={140} tick={{ fill: "var(--text-main)", fontWeight: 500 }} />
-              <Tooltip content={<CustomTooltip />} cursor={{ fill: "var(--info-bg)" }} />
-              <Bar dataKey="count" fill="url(#grad_bottleneck)" radius={[0,6,6,0]} name="Ocorrências" barSize={22} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
       {/* CHARTS ROW 2 */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1.5rem", marginBottom: "1.5rem" }}>
 
@@ -378,7 +369,7 @@ const Dashboard = () => {
                 <linearGradient id="grad_entrega"         x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#5BA9F0" /><stop offset="100%" stopColor="#AED4F7" /></linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} />
-              <XAxis dataKey="name" axisLine={false} tickLine={false} fontSize={11} tick={{ fill: "var(--text-muted)" }} />
+              <XAxis dataKey="name" axisLine={false} tickLine={false} interval={0} tick={<StageAxisTick />} />
               <YAxis axisLine={false} tickLine={false} fontSize={11} tick={{ fill: "var(--text-muted)" }} allowDecimals={false} />
               <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(18,101,175,0.04)" }} />
               <Bar dataKey="value" name="Produtos" radius={[8,8,8,8]} barSize={28}>
@@ -417,7 +408,7 @@ const Dashboard = () => {
                 <linearGradient id="grad_time_entrega"         x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#5BA9F0" /><stop offset="100%" stopColor="#AED4F7" /></linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} />
-              <XAxis dataKey="name" axisLine={false} tickLine={false} fontSize={11} tick={{ fill: "var(--text-muted)" }} />
+              <XAxis dataKey="name" axisLine={false} tickLine={false} interval={0} tick={<StageAxisTick />} />
               <YAxis axisLine={false} tickLine={false} fontSize={11} tick={{ fill: "var(--text-muted)" }} allowDecimals={false} />
               <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(18,101,175,0.04)" }} />
               <Bar dataKey="value" name="Dias" radius={[8,8,8,8]} barSize={28}>
